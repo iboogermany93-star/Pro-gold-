@@ -1,0 +1,2384 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة التحليل المتقدم | Advanced Trading Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0E17;
+  --bg2: #0D1117;
+  --card: #111827;
+  --card2: #161D2E;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #E2E8F0;
+  --text2: #94A3B8;
+  --text3: #64748B;
+  --blue: #3B82F6;
+  --blue2: #1D4ED8;
+  --green: #10B981;
+  --red: #EF4444;
+  --gold: #F59E0B;
+  --purple: #8B5CF6;
+  --cyan: #06B6D4;
+  --orange: #F97316;
+  --radius: 12px;
+  --radius2: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --font-ar: 'IBM Plex Sans Arabic', sans-serif;
+  --font-en: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --sidebar-w: 220px;
+  --header-h: 60px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-ar);
+  min-height:100vh;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+body.ltr{font-family:var(--font-en);direction:ltr}
+body.ltr .sidebar{left:0;right:auto}
+body.ltr .main-content{margin-left:var(--sidebar-w);margin-right:0}
+body.ltr .header{flex-direction:row}
+body.ltr .page-header{flex-direction:row}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(–bg2)}
+::-webkit-scrollbar-thumb{background:var(–border2);border-radius:2px}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+position:fixed;top:0;right:0;bottom:0;
+width:var(–sidebar-w);
+background:var(–card);
+border-left:1px solid var(–border);
+z-index:100;
+display:flex;flex-direction:column;
+overflow-y:auto;
+}
+.sidebar-logo{
+padding:20px 16px 16px;
+border-bottom:1px solid var(–border);
+}
+.logo-text{
+font-size:1.1rem;font-weight:800;
+background:linear-gradient(135deg,var(–blue),var(–cyan));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+letter-spacing:-0.5px;
+}
+.logo-sub{font-size:0.7rem;color:var(–text3);margin-top:2px}
+.sidebar-nav{flex:1;padding:12px 8px}
+.nav-group-label{
+font-size:0.65rem;font-weight:700;
+color:var(–text3);letter-spacing:1.5px;
+text-transform:uppercase;
+padding:12px 8px 6px;
+}
+.nav-item{
+display:flex;align-items:center;gap:10px;
+padding:9px 12px;
+border-radius:var(–radius2);
+cursor:pointer;
+color:var(–text2);
+font-size:0.85rem;
+font-weight:500;
+transition:all 0.2s;
+margin-bottom:2px;
+position:relative;
+}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:var(–text)}
+.nav-item.active{background:rgba(59,130,246,0.15);color:var(–blue)}
+.nav-item.active::before{
+content:’’;position:absolute;right:-8px;top:50%;transform:translateY(-50%);
+width:3px;height:20px;background:var(–blue);border-radius:2px;
+}
+body.ltr .nav-item.active::before{right:auto;left:-8px}
+.nav-icon{font-size:1rem;width:18px;text-align:center}
+.nav-badge{
+margin-right:auto;background:var(–blue2);color:#fff;
+font-size:0.6rem;padding:2px 5px;border-radius:99px;
+font-family:var(–font-mono);
+}
+body.ltr .nav-badge{margin-right:0;margin-left:auto}
+
+.sidebar-bottom{
+padding:12px;border-top:1px solid var(–border);
+}
+.lang-toggle{
+display:flex;align-items:center;justify-content:space-between;
+background:var(–card2);border-radius:var(–radius2);padding:6px 10px;
+cursor:pointer;font-size:0.8rem;color:var(–text2);
+}
+.lang-btn{
+padding:3px 10px;border-radius:6px;cursor:pointer;
+transition:all 0.2s;font-size:0.75rem;font-weight:600;
+}
+.lang-btn.active{background:var(–blue);color:#fff}
+
+/* ===== HEADER ===== */
+.header{
+position:fixed;top:0;left:0;right:var(–sidebar-w);
+height:var(–header-h);
+background:rgba(10,14,23,0.95);
+backdrop-filter:blur(20px);
+border-bottom:1px solid var(–border);
+z-index:90;
+display:flex;align-items:center;
+padding:0 20px;gap:12px;
+}
+body.ltr .header{left:var(–sidebar-w);right:0}
+.header-title{
+font-size:1rem;font-weight:700;
+color:var(–text);
+}
+.header-spacer{flex:1}
+.price-ticker{
+display:flex;gap:16px;align-items:center;
+overflow:hidden;
+}
+.ticker-item{
+display:flex;align-items:center;gap:6px;
+font-family:var(–font-mono);font-size:0.75rem;
+white-space:nowrap;
+}
+.ticker-symbol{color:var(–text2);font-weight:700}
+.ticker-price{color:var(–text);font-weight:600}
+.ticker-change{font-size:0.7rem;padding:2px 5px;border-radius:4px}
+.ticker-change.up{background:rgba(16,185,129,0.15);color:var(–green)}
+.ticker-change.dn{background:rgba(239,68,68,0.15);color:var(–red)}
+.status-dot{
+width:7px;height:7px;border-radius:50%;
+background:var(–green);
+box-shadow:0 0 6px var(–green);
+animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* ===== MAIN CONTENT ===== */
+.main-content{
+margin-right:var(–sidebar-w);
+margin-top:var(–header-h);
+padding:20px;
+min-height:calc(100vh - var(–header-h));
+}
+
+/* ===== PAGE ===== */
+.page{display:none}
+.page.active{display:block;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.page-header{
+display:flex;align-items:center;justify-content:space-between;
+margin-bottom:20px;flex-wrap:wrap;gap:12px;
+}
+.page-title{
+font-size:1.4rem;font-weight:800;
+color:var(–text);
+}
+.page-title span{color:var(–blue)}
+.page-subtitle{font-size:0.8rem;color:var(–text3);margin-top:2px}
+
+/* ===== CARDS ===== */
+.card{
+background:var(–card);
+border:1px solid var(–border);
+border-radius:var(–radius);
+padding:16px;
+}
+.card-header{
+display:flex;align-items:center;justify-content:space-between;
+margin-bottom:14px;
+}
+.card-title{
+font-size:0.85rem;font-weight:700;
+color:var(–text2);letter-spacing:0.3px;
+text-transform:uppercase;
+}
+.card-badge{
+font-size:0.65rem;font-family:var(–font-mono);
+padding:3px 8px;border-radius:99px;
+background:rgba(59,130,246,0.15);color:var(–blue);
+}
+
+/* ===== GRID ===== */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g5{grid-template-columns:repeat(5,1fr)}
+.g12{grid-template-columns:1fr 2fr}
+.g21{grid-template-columns:2fr 1fr}
+@media(max-width:900px){.g2,.g3,.g4,.g5,.g12,.g21{grid-template-columns:1fr}}
+
+/* ===== STAT CARDS ===== */
+.stat-card{
+background:var(–card);
+border:1px solid var(–border);
+border-radius:var(–radius);
+padding:14px 16px;
+position:relative;overflow:hidden;
+}
+.stat-card::before{
+content:’’;position:absolute;top:0;right:0;
+width:60px;height:60px;
+background:radial-gradient(circle,var(–accent,var(–blue)) 0%,transparent 70%);
+opacity:0.12;
+}
+body.ltr .stat-card::before{right:auto;left:0}
+.stat-label{font-size:0.72rem;color:var(–text3);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.stat-value{font-size:1.6rem;font-weight:800;font-family:var(–font-mono);color:var(–text)}
+.stat-sub{font-size:0.72rem;color:var(–text3);margin-top:4px}
+.stat-trend{
+position:absolute;top:14px;left:14px;
+font-size:0.75rem;font-family:var(–font-mono);
+padding:2px 7px;border-radius:99px;
+}
+body.ltr .stat-trend{left:auto;right:14px}
+.stat-trend.up{background:rgba(16,185,129,0.15);color:var(–green)}
+.stat-trend.dn{background:rgba(239,68,68,0.15);color:var(–red)}
+
+/* ===== TABLES ===== */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:0.8rem}
+th{
+padding:8px 12px;
+color:var(–text3);font-weight:700;
+text-transform:uppercase;font-size:0.65rem;letter-spacing:0.8px;
+border-bottom:1px solid var(–border);
+white-space:nowrap;
+text-align:right;
+}
+body.ltr th{text-align:left}
+td{
+padding:9px 12px;
+border-bottom:1px solid var(–border);
+color:var(–text);
+text-align:right;
+}
+body.ltr td{text-align:left}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.td-mono{font-family:var(–font-mono);font-size:0.78rem}
+
+/* ===== BADGES ===== */
+.badge{
+display:inline-flex;align-items:center;gap:4px;
+padding:3px 8px;border-radius:99px;
+font-size:0.68rem;font-weight:700;letter-spacing:0.3px;
+white-space:nowrap;
+}
+.badge.buy{background:rgba(16,185,129,0.15);color:var(–green)}
+.badge.sell{background:rgba(239,68,68,0.15);color:var(–red)}
+.badge.win{background:rgba(16,185,129,0.15);color:var(–green)}
+.badge.loss{background:rgba(239,68,68,0.15);color:var(–red)}
+.badge.pending{background:rgba(245,158,11,0.15);color:var(–gold)}
+.badge.active{background:rgba(59,130,246,0.15);color:var(–blue)}
+.badge.smc{background:rgba(139,92,246,0.15);color:var(–purple)}
+.badge.pa{background:rgba(6,182,212,0.15);color:var(–cyan)}
+.badge.ema{background:rgba(249,115,22,0.15);color:var(–orange)}
+.badge.trend{background:rgba(16,185,129,0.15);color:var(–green)}
+.badge.brk{background:rgba(245,158,11,0.15);color:var(–gold)}
+
+/* ===== SIGNALS ===== */
+.signal-card{
+background:var(–card2);
+border:1px solid var(–border);
+border-radius:var(–radius);
+padding:14px;
+transition:all 0.2s;
+border-right:3px solid transparent;
+}
+body.ltr .signal-card{border-right:none;border-left:3px solid transparent}
+.signal-card.buy{border-right-color:var(–green)}
+body.ltr .signal-card.buy{border-left-color:var(–green)}
+.signal-card.sell{border-right-color:var(–red)}
+body.ltr .signal-card.sell{border-left-color:var(–red)}
+.signal-card:hover{background:rgba(255,255,255,0.04)}
+.signal-top{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.signal-body{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sig-field{display:flex;flex-direction:column;gap:2px}
+.sig-lbl{font-size:0.62rem;color:var(–text3);font-weight:700;text-transform:uppercase}
+.sig-val{font-size:0.8rem;font-family:var(–font-mono);color:var(–text);font-weight:600}
+.signal-reason{
+margin-top:10px;padding-top:8px;
+border-top:1px solid var(–border);
+font-size:0.75rem;color:var(–text2);
+line-height:1.5;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress{height:6px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;transition:width 0.5s ease}
+.progress-fill.blue{background:linear-gradient(90deg,var(–blue),var(–cyan))}
+.progress-fill.green{background:linear-gradient(90deg,var(–green),#34D399)}
+.progress-fill.red{background:linear-gradient(90deg,var(–red),#F87171)}
+.progress-fill.gold{background:linear-gradient(90deg,var(–gold),#FCD34D)}
+
+/* ===== FILTER BAR ===== */
+.filter-bar{
+display:flex;gap:8px;flex-wrap:wrap;
+margin-bottom:16px;
+}
+.filter-btn{
+padding:6px 14px;border-radius:99px;
+border:1px solid var(–border);
+background:transparent;color:var(–text2);
+font-size:0.75rem;font-weight:600;
+cursor:pointer;transition:all 0.2s;
+font-family:inherit;
+}
+.filter-btn:hover{border-color:var(–blue);color:var(–blue)}
+.filter-btn.active{background:var(–blue);border-color:var(–blue);color:#fff}
+
+/* ===== SELECT ===== */
+.sel{
+background:var(–card2);
+border:1px solid var(–border);
+border-radius:var(–radius2);
+color:var(–text);
+padding:6px 10px;
+font-size:0.78rem;
+font-family:inherit;
+cursor:pointer;
+outline:none;
+}
+.sel:focus{border-color:var(–blue)}
+
+/* ===== SCHOOL COLORS ===== */
+.school-smc{color:var(–purple)}
+.school-pa{color:var(–cyan)}
+.school-ema{color:var(–orange)}
+.school-trend{color:var(–green)}
+.school-brk{color:var(–gold)}
+
+/* ===== WINRATE RING ===== */
+.ring-wrap{
+display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.ring-svg{transform:rotate(-90deg)}
+.ring-text{
+text-align:center;
+}
+.ring-val{font-size:1.4rem;font-weight:800;font-family:var(–font-mono)}
+.ring-lbl{font-size:0.65rem;color:var(–text3);text-transform:uppercase;letter-spacing:0.5px}
+
+/* ===== CHART PLACEHOLDER ===== */
+.chart-placeholder{
+background:var(–card2);
+border-radius:var(–radius);
+border:1px solid var(–border);
+height:220px;
+display:flex;align-items:center;justify-content:center;
+position:relative;
+overflow:hidden;
+}
+.chart-canvas{width:100%;height:100%}
+
+/* ===== AI ASSISTANT ===== */
+.ai-panel{
+display:flex;flex-direction:column;
+height:calc(100vh - 120px);
+}
+.ai-messages{
+flex:1;overflow-y:auto;
+padding:16px;
+display:flex;flex-direction:column;gap:12px;
+}
+.ai-msg{
+display:flex;gap:10px;
+align-items:flex-start;
+}
+.ai-msg.user{flex-direction:row-reverse}
+.ai-avatar{
+width:32px;height:32px;border-radius:50%;
+display:flex;align-items:center;justify-content:center;
+font-size:0.85rem;flex-shrink:0;font-weight:700;
+}
+.ai-avatar.bot{background:linear-gradient(135deg,var(–blue),var(–purple))}
+.ai-avatar.user{background:linear-gradient(135deg,var(–green),var(–cyan))}
+.ai-bubble{
+max-width:80%;
+padding:12px 14px;
+border-radius:var(–radius);
+font-size:0.82rem;
+line-height:1.7;
+}
+.ai-bubble.bot{background:var(–card2);border:1px solid var(–border);color:var(–text)}
+.ai-bubble.user{background:var(–blue2);color:#fff}
+.ai-input-area{
+padding:12px 16px;
+border-top:1px solid var(–border);
+display:flex;gap:10px;
+}
+.ai-input{
+flex:1;
+background:var(–card2);
+border:1px solid var(–border);
+border-radius:var(–radius);
+padding:10px 14px;
+color:var(–text);
+font-family:inherit;
+font-size:0.82rem;
+resize:none;
+outline:none;
+}
+.ai-input:focus{border-color:var(–blue)}
+.ai-send{
+background:var(–blue);
+border:none;border-radius:var(–radius);
+color:#fff;padding:10px 16px;
+cursor:pointer;font-size:0.85rem;font-weight:700;
+transition:all 0.2s;font-family:inherit;
+}
+.ai-send:hover{background:var(–blue2)}
+.ai-suggestions{
+padding:8px 16px;
+display:flex;gap:8px;flex-wrap:wrap;
+}
+.ai-sugg{
+padding:5px 12px;border-radius:99px;
+border:1px solid var(–border);
+background:transparent;color:var(–text2);
+font-size:0.72rem;cursor:pointer;
+transition:all 0.2s;font-family:inherit;
+}
+.ai-sugg:hover{border-color:var(–blue);color:var(–blue)}
+
+/* ===== TRADE CARD ===== */
+.trade-card{
+background:var(–card2);
+border:1px solid var(–border);
+border-radius:var(–radius);
+padding:14px;
+margin-bottom:10px;
+display:grid;grid-template-columns:auto 1fr auto;
+gap:12px;align-items:center;
+}
+.trade-dir{
+width:36px;height:36px;border-radius:8px;
+display:flex;align-items:center;justify-content:center;
+font-size:0.9rem;font-weight:800;
+}
+.trade-dir.buy{background:rgba(16,185,129,0.15);color:var(–green)}
+.trade-dir.sell{background:rgba(239,68,68,0.15);color:var(–red)}
+.trade-info{}
+.trade-sym{font-size:0.9rem;font-weight:700;color:var(–text)}
+.trade-meta{font-size:0.72rem;color:var(–text3);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+.trade-prices{text-align:left;font-family:var(–font-mono);font-size:0.75rem}
+body.ltr .trade-prices{text-align:right}
+.tp-row{display:flex;gap:6px;justify-content:flex-end;margin-top:2px}
+body.ltr .tp-row{justify-content:flex-start}
+
+/* ===== STAT TABLE ===== */
+.stat-row{
+display:flex;align-items:center;
+justify-content:space-between;
+padding:8px 0;
+border-bottom:1px solid var(–border);
+gap:12px;
+}
+.stat-row:last-child{border-bottom:none}
+.stat-row-label{font-size:0.78rem;color:var(–text2)}
+.stat-row-val{font-size:0.8rem;font-family:var(–font-mono);font-weight:700;color:var(–text)}
+
+/* ===== MARKET ROW ===== */
+.market-row{
+display:flex;align-items:center;
+padding:12px 14px;
+border-bottom:1px solid var(–border);
+gap:12px;cursor:pointer;
+transition:all 0.15s;
+}
+.market-row:hover{background:rgba(255,255,255,0.03)}
+.market-icon{
+width:36px;height:36px;border-radius:8px;
+display:flex;align-items:center;justify-content:center;
+font-size:1rem;font-weight:800;
+flex-shrink:0;
+}
+.market-name{font-size:0.88rem;font-weight:700;color:var(–text)}
+.market-desc{font-size:0.7rem;color:var(–text3);margin-top:1px}
+.market-price{margin-right:auto;font-family:var(–font-mono);font-size:0.95rem;font-weight:700;color:var(–text)}
+body.ltr .market-price{margin-right:0;margin-left:auto}
+.market-change{
+font-family:var(–font-mono);font-size:0.75rem;
+padding:3px 8px;border-radius:6px;
+}
+.market-change.up{background:rgba(16,185,129,0.15);color:var(–green)}
+.market-change.dn{background:rgba(239,68,68,0.15);color:var(–red)}
+
+/* ===== SCHOOL MATRIX ===== */
+.school-matrix{
+display:grid;grid-template-columns:auto repeat(4,1fr);gap:2px;
+font-size:0.72rem;
+}
+.mx-head{
+background:var(–card2);padding:7px 10px;
+border-radius:4px;color:var(–text3);font-weight:700;
+text-align:center;
+}
+.mx-label{
+background:var(–card2);padding:7px 10px;
+border-radius:4px;color:var(–text2);font-weight:600;
+display:flex;align-items:center;
+}
+.mx-cell{
+background:var(–card2);padding:7px;
+border-radius:4px;
+text-align:center;
+font-family:var(–font-mono);font-weight:700;
+}
+.mx-cell.strong-buy{background:rgba(16,185,129,0.2);color:var(–green)}
+.mx-cell.buy{background:rgba(16,185,129,0.1);color:#34D399}
+.mx-cell.sell{background:rgba(239,68,68,0.1);color:#F87171}
+.mx-cell.strong-sell{background:rgba(239,68,68,0.2);color:var(–red)}
+.mx-cell.neutral{background:rgba(245,158,11,0.1);color:var(–gold)}
+
+/* ===== SCROLLABLE PANEL ===== */
+.scroll-list{
+max-height:320px;overflow-y:auto;
+}
+
+/* ===== LOADING ===== */
+.loading{
+display:flex;align-items:center;justify-content:center;
+height:120px;color:var(–text3);font-size:0.8rem;gap:8px;
+}
+.spinner{
+width:18px;height:18px;border-radius:50%;
+border:2px solid var(–border2);
+border-top-color:var(–blue);
+animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== CONFIDENCE ===== */
+.confidence{
+display:flex;align-items:center;gap:8px;
+padding:6px 12px;border-radius:var(–radius2);
+background:var(–card2);font-size:0.78rem;
+border:1px solid var(–border);
+}
+.conf-dot{width:8px;height:8px;border-radius:50%}
+.conf-strong .conf-dot{background:var(–green);box-shadow:0 0 6px var(–green)}
+.conf-medium .conf-dot{background:var(–gold);box-shadow:0 0 6px var(–gold)}
+.conf-weak .conf-dot{background:var(–text3)}
+
+/* ===== NOTIFICATIONS ===== */
+.notif{
+position:fixed;bottom:20px;left:20px;
+z-index:999;
+display:flex;flex-direction:column;gap:8px;
+}
+body.ltr .notif{left:auto;right:20px}
+.notif-item{
+background:var(–card);border:1px solid var(–border2);
+border-radius:var(–radius);padding:12px 16px;
+display:flex;gap:10px;align-items:center;
+font-size:0.78rem;
+box-shadow:var(–shadow);
+animation:slideIn 0.3s ease;
+max-width:280px;
+}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+body.ltr .notif-item{animation-name:slideInL}
+@keyframes slideInL{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+
+/* ===== TABS ===== */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(–border);margin-bottom:16px}
+.tab{
+padding:8px 14px;cursor:pointer;
+font-size:0.8rem;font-weight:600;
+color:var(–text3);border-bottom:2px solid transparent;
+transition:all 0.2s;margin-bottom:-1px;
+}
+.tab:hover{color:var(–text2)}
+.tab.active{color:var(–blue);border-bottom-color:var(–blue)}
+
+/* ===== MINI CANDLE ===== */
+.mini-candles{display:flex;align-items:flex-end;gap:2px;height:40px}
+.candle-bar{
+width:6px;border-radius:1px;
+transition:all 0.3s;
+}
+</style>
+
+</head>
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text" data-ar="منصة ألفا" data-en="Alpha Platform">منصة ألفا</div>
+    <div class="logo-sub" data-ar="تحليل متعدد المصادر" data-en="Multi-Strategy Analysis">تحليل متعدد المصادر</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group-label" data-ar="رئيسي" data-en="MAIN">رئيسي</div>
+    <div class="nav-item active" data-page="dashboard">
+      <span class="nav-icon">⬛</span>
+      <span data-ar="لوحة القيادة" data-en="Dashboard">لوحة القيادة</span>
+    </div>
+    <div class="nav-item" data-page="markets">
+      <span class="nav-icon">📊</span>
+      <span data-ar="الأسواق" data-en="Markets">الأسواق</span>
+    </div>
+    <div class="nav-item" data-page="signals">
+      <span class="nav-icon">⚡</span>
+      <span data-ar="الإشارات" data-en="Signals">الإشارات</span>
+      <span class="nav-badge" id="signals-badge">0</span>
+    </div>
+    <div class="nav-group-label" data-ar="التداول" data-en="TRADING">التداول</div>
+    <div class="nav-item" data-page="trades">
+      <span class="nav-icon">📈</span>
+      <span data-ar="الصفقات النشطة" data-en="Active Trades">الصفقات النشطة</span>
+      <span class="nav-badge" id="trades-badge">0</span>
+    </div>
+    <div class="nav-item" data-page="backlist">
+      <span class="nav-icon">📋</span>
+      <span data-ar="قائمة السجل" data-en="Backlist">قائمة السجل</span>
+    </div>
+    <div class="nav-group-label" data-ar="التحليل" data-en="ANALYSIS">التحليل</div>
+    <div class="nav-item" data-page="schools">
+      <span class="nav-icon">🏫</span>
+      <span data-ar="مقارنة المدارس" data-en="Schools">مقارنة المدارس</span>
+    </div>
+    <div class="nav-item" data-page="statistics">
+      <span class="nav-icon">📉</span>
+      <span data-ar="الإحصائيات" data-en="Statistics">الإحصائيات</span>
+    </div>
+    <div class="nav-item" data-page="timeframes">
+      <span class="nav-icon">⏱</span>
+      <span data-ar="الأطر الزمنية" data-en="Timeframes">الأطر الزمنية</span>
+    </div>
+    <div class="nav-group-label" data-ar="الذكاء الاصطناعي" data-en="AI">الذكاء الاصطناعي</div>
+    <div class="nav-item" data-page="ai">
+      <span class="nav-icon">🤖</span>
+      <span data-ar="المساعد الذكي" data-en="AI Assistant">المساعد الذكي</span>
+    </div>
+    <div class="nav-item" data-page="settings">
+      <span class="nav-icon">⚙️</span>
+      <span data-ar="الإعدادات" data-en="Settings">الإعدادات</span>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="lang-toggle">
+      <span style="font-size:0.72rem;color:var(--text3)">🌐</span>
+      <div style="display:flex;gap:4px">
+        <div class="lang-btn active" id="btn-ar" onclick="setLang('ar')">العربية</div>
+        <div class="lang-btn" id="btn-en" onclick="setLang('en')">EN</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;display:flex;align-items:center;gap:6px;padding:6px 10px">
+      <div class="status-dot"></div>
+      <span style="font-size:0.72rem;color:var(--text3)" data-ar="مباشر" data-en="Live">مباشر</span>
+      <span style="font-size:0.68rem;color:var(--text3);margin-right:auto;font-family:var(--font-mono)" id="time-display"></span>
+    </div>
+  </div>
+</aside>
+
+<!-- HEADER -->
+
+<header class="header">
+  <div class="header-title" id="page-header-title" data-ar="لوحة القيادة" data-en="Dashboard">لوحة القيادة</div>
+  <div class="header-spacer"></div>
+  <div class="price-ticker" id="price-ticker"></div>
+  <div class="status-dot" title="Live Data"></div>
+</header>
+
+<!-- MAIN CONTENT -->
+
+<main class="main-content">
+
+<!-- ===== DASHBOARD ===== -->
+
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div>
+      <div class="page-title" data-ar="لوحة <span>القيادة</span>" data-en="Trading <span>Dashboard</span>">لوحة <span>القيادة</span></div>
+      <div class="page-subtitle" data-ar="تحديث مباشر كل 5 ثوانٍ" data-en="Live update every 5 seconds">تحديث مباشر كل 5 ثوانٍ</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <select class="sel" id="dash-symbol" onchange="refreshDashboard()">
+        <option value="XAUUSD">XAUUSD</option>
+        <option value="XAUEUR">XAUEUR</option>
+        <option value="BTCUSD">BTCUSD</option>
+        <option value="BRENT">BRENT</option>
+      </select>
+      <select class="sel" id="dash-tf" onchange="refreshDashboard()">
+        <option value="M5">M5</option>
+        <option value="M15">M15</option>
+        <option value="M30">M30</option>
+        <option value="H1" selected>H1</option>
+        <option value="H4">H4</option>
+        <option value="D1">D1</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+
+  <div class="grid g5" id="dash-stats" style="margin-bottom:16px"></div>
+
+  <!-- Chart + Matrix -->
+
+  <div class="grid g21" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" data-ar="الرسم البياني المحاكي" data-en="Simulated Chart">الرسم البياني المحاكي</span>
+        <span class="card-badge" id="chart-symbol-label">XAUUSD H1</span>
+      </div>
+      <div class="chart-placeholder">
+        <canvas class="chart-canvas" id="main-chart"></canvas>
+      </div>
+      <div id="chart-indicators" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" data-ar="مصفوفة المدارس" data-en="Schools Matrix">مصفوفة المدارس</span>
+      </div>
+      <div id="school-matrix-wrap"></div>
+    </div>
+  </div>
+
+  <!-- Latest Signals + Active Trades -->
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" data-ar="أحدث الإشارات" data-en="Latest Signals">أحدث الإشارات</span>
+        <span class="card-badge" id="latest-sig-count">0</span>
+      </div>
+      <div class="scroll-list" id="dash-signals"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" data-ar="الصفقات النشطة" data-en="Active Trades">الصفقات النشطة</span>
+        <span class="card-badge" id="dash-trades-count">0</span>
+      </div>
+      <div class="scroll-list" id="dash-active-trades"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MARKETS ===== -->
+
+<div class="page" id="page-markets">
+  <div class="page-header">
+    <div>
+      <div class="page-title" data-ar="<span>الأسواق</span>" data-en="<span>Markets</span>"><span>الأسواق</span></div>
+      <div class="page-subtitle" data-ar="أسعار مباشرة لجميع الرموز" data-en="Live prices for all symbols">أسعار مباشرة لجميع الرموز</div>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card" id="markets-list"></div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" data-ar="تفاصيل السوق" data-en="Market Detail">تفاصيل السوق</span>
+      </div>
+      <div id="market-detail"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title" data-ar="مقارنة الأسواق عبر الأطر" data-en="Market Comparison Across Timeframes">مقارنة الأسواق عبر الأطر</span>
+    </div>
+    <div id="market-tf-comparison"></div>
+  </div>
+</div>
+
+<!-- ===== SIGNALS ===== -->
+
+<div class="page" id="page-signals">
+  <div class="page-header">
+    <div>
+      <div class="page-title" data-ar="<span>الإشارات</span>" data-en="<span>Signals</span>"><span>الإشارات</span></div>
+      <div class="page-subtitle" data-ar="جميع الإشارات من كل المدارس والأطر" data-en="All signals from all schools and timeframes">جميع الإشارات من كل المدارس والأطر</div>
+    </div>
+  </div>
+  <div class="filter-bar" id="sig-filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="filterSignals(this,'all')" data-ar="الكل" data-en="All">الكل</button>
+    <button class="filter-btn" data-filter="buy" onclick="filterSignals(this,'buy')" data-ar="شراء" data-en="Buy">شراء</button>
+    <button class="filter-btn" data-filter="sell" onclick="filterSignals(this,'sell')" data-ar="بيع" data-en="Sell">بيع</button>
+    <button class="filter-btn" data-filter="smc" onclick="filterSignals(this,'smc')" data-ar="SMC" data-en="SMC">SMC</button>
+    <button class="filter-btn" data-filter="pa" onclick="filterSignals(this,'pa')" data-ar="Price Action" data-en="Price Action">Price Action</button>
+    <button class="filter-btn" data-filter="ema" onclick="filterSignals(this,'ema')" data-ar="EMA+RSI" data-en="EMA+RSI">EMA+RSI</button>
+    <button class="filter-btn" data-filter="trend" onclick="filterSignals(this,'trend')" data-ar="Trend" data-en="Trend">Trend</button>
+    <button class="filter-btn" data-filter="brk" onclick="filterSignals(this,'brk')" data-ar="Breakout" data-en="Breakout">Breakout</button>
+  </div>
+  <div id="signals-list"></div>
+</div>
+
+<!-- ===== ACTIVE TRADES ===== -->
+
+<div class="page" id="page-trades">
+  <div class="page-header">
+    <div>
+      <div class="page-title" data-ar="<span>الصفقات</span> النشطة" data-en="<span>Active</span> Trades"><span>الصفقات</span> النشطة</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <select class="sel" id="trades-school-filter" onchange="renderTrades()">
+        <option value="all" data-ar="كل المدارس" data-en="All Schools">كل المدارس</option>
+        <option value="smc">SMC</option>
+        <option value="pa">Price Action</option>
+        <option value="ema">EMA+RSI</option>
+        <option value="trend">Trend</option>
+        <option value="brk">Breakout</option>
+      </select>
+      <select class="sel" id="trades-sym-filter" onchange="renderTrades()">
+        <option value="all" data-ar="كل الرموز" data-en="All Symbols">كل الرموز</option>
+        <option value="XAUUSD">XAUUSD</option>
+        <option value="XAUEUR">XAUEUR</option>
+        <option value="BTCUSD">BTCUSD</option>
+        <option value="BRENT">BRENT</option>
+      </select>
+    </div>
+  </div>
+  <div id="trades-list"></div>
+</div>
+
+<!-- ===== BACKLIST ===== -->
+
+<div class="page" id="page-backlist">
+  <div class="page-header">
+    <div>
+      <div class="page-title" data-ar="قائمة <span>السجل</span>" data-en="Trade <span>Backlist</span>">قائمة <span>السجل</span></div>
+      <div class="page-subtitle" data-ar="آخر 200 صفقة مغلقة لكل مدرسة" data-en="Last 200 closed trades per school">آخر 200 صفقة مغلقة لكل مدرسة</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <select class="sel" id="bl-school" onchange="renderBacklist()">
+        <option value="all" data-ar="كل المدارس" data-en="All Schools">كل المدارس</option>
+        <option value="smc">SMC</option>
+        <option value="pa">Price Action</option>
+        <option value="ema">EMA+RSI</option>
+        <option value="trend">Trend</option>
+        <option value="brk">Breakout</option>
+      </select>
+      <select class="sel" id="bl-symbol" onchange="renderBacklist()">
+        <option value="all" data-ar="كل الرموز" data-en="All Symbols">كل الرموز</option>
+        <option value="XAUUSD">XAUUSD</option><option value="XAUEUR">XAUEUR</option>
+        <option value="BTCUSD">BTCUSD</option><option value="BRENT">BRENT</option>
+      </select>
+      <select class="sel" id="bl-tf" onchange="renderBacklist()">
+        <option value="all" data-ar="كل الأطر" data-en="All TF">كل الأطر</option>
+        <option value="M5">M5</option><option value="M15">M15</option>
+        <option value="M30">M30</option><option value="H1">H1</option>
+        <option value="H4">H4</option><option value="D1">D1</option>
+      </select>
+      <select class="sel" id="bl-result" onchange="renderBacklist()">
+        <option value="all" data-ar="النتائج" data-en="Result">النتائج</option>
+        <option value="win" data-ar="ربح" data-en="Win">ربح</option>
+        <option value="loss" data-ar="خسارة" data-en="Loss">خسارة</option>
+      </select>
+    </div>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-ar="#" data-en="#">#</th>
+            <th data-ar="الرمز" data-en="Symbol">الرمز</th>
+            <th data-ar="المدرسة" data-en="School">المدرسة</th>
+            <th data-ar="الإطار" data-en="TF">الإطار</th>
+            <th data-ar="الاتجاه" data-en="Dir">الاتجاه</th>
+            <th data-ar="الدخول" data-en="Entry">الدخول</th>
+            <th data-ar="الخروج" data-en="Exit">الخروج</th>
+            <th data-ar="SL" data-en="SL">SL</th>
+            <th data-ar="TP1" data-en="TP1">TP1</th>
+            <th data-ar="TP2" data-en="TP2">TP2</th>
+            <th data-ar="R:R" data-en="R:R">R:R</th>
+            <th data-ar="النتيجة" data-en="Result">النتيجة</th>
+            <th data-ar="المدة" data-en="Duration">المدة</th>
+          </tr>
+        </thead>
+        <tbody id="backlist-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCHOOLS ===== -->
+
+<div class="page" id="page-schools">
+  <div class="page-header">
+    <div>
+      <div class="page-title" data-ar="مقارنة <span>المدارس</span>" data-en="Schools <span>Comparison</span>">مقارنة <span>المدارس</span></div>
+    </div>
+  </div>
+  <div class="grid g5" id="school-cards" style="margin-bottom:16px"></div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title" data-ar="مصفوفة الأداء" data-en="Performance Matrix">مصفوفة الأداء</span>
+    </div>
+    <div id="school-perf-matrix"></div>
+  </div>
+</div>
+
+<!-- ===== STATISTICS ===== -->
+
+<div class="page" id="page-statistics">
+  <div class="page-header">
+    <div>
+      <div class="page-title" data-ar="<span>الإحصائيات</span>" data-en="<span>Statistics</span>"><span>الإحصائيات</span></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <select class="sel" id="stat-school" onchange="renderStatistics()">
+        <option value="smc">SMC</option><option value="pa">Price Action</option>
+        <option value="ema">EMA+RSI</option><option value="trend">Trend</option>
+        <option value="brk">Breakout</option>
+      </select>
+      <select class="sel" id="stat-symbol" onchange="renderStatistics()">
+        <option value="XAUUSD">XAUUSD</option><option value="XAUEUR">XAUEUR</option>
+        <option value="BTCUSD">BTCUSD</option><option value="BRENT">BRENT</option>
+      </select>
+      <select class="sel" id="stat-tf" onchange="renderStatistics()">
+        <option value="H1" selected>H1</option><option value="M5">M5</option>
+        <option value="M15">M15</option><option value="M30">M30</option>
+        <option value="H4">H4</option><option value="D1">D1</option>
+      </select>
+    </div>
+  </div>
+  <div id="statistics-wrap"></div>
+</div>
+
+<!-- ===== TIMEFRAMES ===== -->
+
+<div class="page" id="page-timeframes">
+  <div class="page-header">
+    <div>
+      <div class="page-title" data-ar="<span>الأطر الزمنية</span>" data-en="<span>Timeframes</span>"><span>الأطر الزمنية</span></div>
+    </div>
+    <select class="sel" id="tf-symbol" onchange="renderTimeframes()">
+      <option value="XAUUSD">XAUUSD</option><option value="XAUEUR">XAUEUR</option>
+      <option value="BTCUSD">BTCUSD</option><option value="BRENT">BRENT</option>
+    </select>
+  </div>
+  <div id="timeframes-wrap"></div>
+</div>
+
+<!-- ===== AI ASSISTANT ===== -->
+
+<div class="page" id="page-ai">
+  <div class="page-header">
+    <div>
+      <div class="page-title" data-ar="المساعد <span>الذكي</span>" data-en="AI <span>Assistant</span>">المساعد <span>الذكي</span></div>
+      <div class="page-subtitle" data-ar="مدعوم بـ Claude AI — للأغراض التعليمية فقط" data-en="Powered by Claude AI — Educational purposes only">مدعوم بـ Claude AI — للأغراض التعليمية فقط</div>
+    </div>
+    <select class="sel" id="ai-symbol-sel">
+      <option value="XAUUSD">XAUUSD</option><option value="XAUEUR">XAUEUR</option>
+      <option value="BTCUSD">BTCUSD</option><option value="BRENT">BRENT</option>
+    </select>
+  </div>
+  <div class="card ai-panel">
+    <div class="ai-messages" id="ai-messages"></div>
+    <div class="ai-suggestions" id="ai-suggestions"></div>
+    <div class="ai-input-area">
+      <textarea class="ai-input" id="ai-input" rows="2" data-ar-placeholder="اسأل المساعد عن الأسواق..." data-en-placeholder="Ask about markets, signals, or trade ideas..."></textarea>
+      <button class="ai-send" onclick="sendAI()" id="ai-send-btn">
+        <span data-ar="إرسال" data-en="Send">إرسال</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+
+<div class="page" id="page-settings">
+  <div class="page-header">
+    <div>
+      <div class="page-title" data-ar="<span>الإعدادات</span>" data-en="<span>Settings</span>"><span>الإعدادات</span></div>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-header"><span class="card-title" data-ar="إعدادات المنصة" data-en="Platform Settings">إعدادات المنصة</span></div>
+      <div id="settings-wrap"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title" data-ar="مضاعفات ATR" data-en="ATR Multipliers">مضاعفات ATR</span></div>
+      <div id="atr-settings"></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- Notifications -->
+
+<div class="notif" id="notif-container"></div>
+
+<script>
+// ============================================================
+//  TRANSLATIONS
+// ============================================================
+const LANG = {ar:{}, en:{}};
+let currentLang = 'ar';
+
+const T = {
+  ar: {
+    buy:'شراء', sell:'بيع', win:'ربح', loss:'خسارة',
+    entry:'الدخول', sl:'وقف الخسارة', tp1:'الهدف ١', tp2:'الهدف ٢',
+    school:'المدرسة', symbol:'الرمز', timeframe:'الإطار', direction:'الاتجاه',
+    result:'النتيجة', duration:'المدة', reason:'السبب', confidence:'الثقة',
+    strong:'قوي', medium:'متوسط', weak:'ضعيف',
+    winrate:'معدل الربح', profitFactor:'عامل الربح', totalTrades:'إجمالي الصفقات',
+    avgRR:'متوسط R:R', bestSession:'أفضل جلسة', bestHour:'أفضل ساعة',
+    tp1hit:'نسبة إصابة TP1', tp2hit:'نسبة إصابة TP2',
+    loading:'جار التحميل...', noData:'لا توجد بيانات',
+    aiWelcome:'مرحباً! أنا مساعدك التداولي الذكي. يمكنني تحليل الأسواق وتوليد أفكار تعليمية وإجابة أسئلتك. كيف يمكنني مساعدتك؟',
+    aiDisclaimer:'⚠️ تنبيه: جميع التحليلات لأغراض تعليمية فقط وليست نصيحة مالية.',
+    sugg1:'ما هو الاتجاه الحالي؟', sugg2:'أي مدرسة الأفضل أداءً؟',
+    sugg3:'اقترح صفقة تعليمية', sugg4:'تحليل جميع الأطر الزمنية',
+    sugg5:'ما أسباب الإشارة الأخيرة؟',
+    mins:'د', hours:'س', days:'ي',
+  },
+  en: {
+    buy:'Buy', sell:'Sell', win:'Win', loss:'Loss',
+    entry:'Entry', sl:'Stop Loss', tp1:'TP1', tp2:'TP2',
+    school:'School', symbol:'Symbol', timeframe:'Timeframe', direction:'Direction',
+    result:'Result', duration:'Duration', reason:'Reason', confidence:'Confidence',
+    strong:'Strong', medium:'Medium', weak:'Weak',
+    winrate:'Win Rate', profitFactor:'Profit Factor', totalTrades:'Total Trades',
+    avgRR:'Avg R:R', bestSession:'Best Session', bestHour:'Best Hour',
+    tp1hit:'TP1 Hit Rate', tp2hit:'TP2 Hit Rate',
+    loading:'Loading...', noData:'No data available',
+    aiWelcome:"Hello! I'm your AI trading assistant. I can analyze markets, generate educational trade ideas, and answer your questions. How can I help?",
+    aiDisclaimer:'⚠️ Disclaimer: All analysis is for educational purposes only and not financial advice.',
+    sugg1:'What is the current trend?', sugg2:'Which school performs best?',
+    sugg3:'Suggest an educational trade', sugg4:'Analyze all timeframes',
+    sugg5:'Why was the last signal generated?',
+    mins:'m', hours:'h', days:'d',
+  }
+};
+
+function t(key){ return (T[currentLang]||T.ar)[key] || key; }
+
+// ============================================================
+//  DATA ENGINE — MOCK
+// ============================================================
+const SYMBOLS = ['XAUUSD','XAUEUR','BTCUSD','BRENT'];
+const TIMEFRAMES = ['M5','M15','M30','H1','H4','D1'];
+const SCHOOLS = ['smc','pa','ema','trend','brk'];
+const SCHOOL_NAMES = {
+  smc:'SMC', pa:'Price Action', ema:'EMA+RSI', trend:'Trend', brk:'Breakout'
+};
+const SCHOOL_COLORS = {
+  smc:'var(--purple)', pa:'var(--cyan)', ema:'var(--orange)',
+  trend:'var(--green)', brk:'var(--gold)'
+};
+
+// Base prices
+const BASE_PRICES = {
+  XAUUSD: 2340.50,
+  XAUEUR: 2161.30,
+  BTCUSD: 67420.00,
+  BRENT: 84.35
+};
+
+// ATR multipliers per timeframe
+const ATR_MULT = {M5:1.0, M15:1.5, M30:2.0, H1:2.5, H4:3.0, D1:4.0};
+// TP2 multipliers
+const TP2_MULT = {M5:2.0, M15:2.5, M30:3.0, H1:3.5, H4:4.0, D1:5.0};
+// ATR base values per symbol
+const ATR_BASE = {XAUUSD:3.5, XAUEUR:3.2, BTCUSD:650, BRENT:0.65};
+
+// Live prices store
+let prices = {};
+let priceChanges = {};
+
+// Signals store
+let allSignals = [];
+let activeTrades = [];
+let closedTrades = [];
+let statistics = {};
+
+// ============================================================
+//  PRICE ENGINE
+// ============================================================
+function initPrices(){
+  SYMBOLS.forEach(s => {
+    prices[s] = BASE_PRICES[s];
+    priceChanges[s] = 0;
+  });
+}
+
+function updatePrices(){
+  SYMBOLS.forEach(s => {
+    const vol = {XAUUSD:0.4, XAUEUR:0.35, BTCUSD:80, BRENT:0.08}[s];
+    const change = (Math.random()-0.5)*2*vol;
+    prices[s] = Math.max(prices[s] + change, BASE_PRICES[s]*0.5);
+    priceChanges[s] = ((prices[s] - BASE_PRICES[s])/BASE_PRICES[s]*100);
+  });
+  renderTicker();
+  updateActiveTradesPrices();
+}
+
+function fmtPrice(sym, val){
+  if(sym==='BTCUSD') return val.toFixed(2);
+  if(sym==='BRENT') return val.toFixed(3);
+  return val.toFixed(2);
+}
+
+// ============================================================
+//  ATR & SL/TP CALCULATOR
+// ============================================================
+function getATR(sym, tf){
+  const base = ATR_BASE[sym] || 3.5;
+  const tfMult = {M5:0.3, M15:0.5, M30:0.7, H1:1.0, H4:1.8, D1:3.5}[tf] || 1;
+  return base * tfMult * (0.9 + Math.random()*0.2);
+}
+
+function calcSLTP(sym, tf, direction, entry){
+  const atr = getATR(sym, tf);
+  const mult = ATR_MULT[tf];
+  const sl_dist = atr * mult;
+  const tp1_dist = sl_dist;
+  const tp2_dist = sl_dist * TP2_MULT[tf];
+
+  if(direction==='buy'){
+    return {
+      sl: entry - sl_dist,
+      tp1: entry + tp1_dist,
+      tp2: entry + tp2_dist,
+      atr, sl_dist
+    };
+  } else {
+    return {
+      sl: entry + sl_dist,
+      tp1: entry - tp1_dist,
+      tp2: entry - tp2_dist,
+      atr, sl_dist
+    };
+  }
+}
+
+// ============================================================
+//  SIGNAL GENERATORS (5 Schools)
+// ============================================================
+function randEl(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function randBool(p=0.5){ return Math.random()<p; }
+
+// SMC Engine
+function smcAnalyze(sym, tf, price){
+  const dir = randBool(0.52)?'buy':'sell';
+  const levels = ['Order Block','FVG','BOS','CHoCH','Liquidity Sweep','Premium/Discount Zone'];
+  const level = randEl(levels);
+  const smcReasons = {
+    ar:{
+      buy:`تم الكشف عن ${level === 'Order Block'?'كتلة أوامر':level==='FVG'?'فجوة قيمة عادلة':level==='BOS'?'كسر البنية':level==='CHoCH'?'تغيير اتجاه الهيكل':level==='Liquidity Sweep'?'اختراق السيولة':'منطقة الخصم'} صاعدة. السعر يتداول في منطقة الخصم مع زخم سمارت موني.`,
+      sell:`تم الكشف عن ${level === 'Order Block'?'كتلة أوامر':level==='FVG'?'فجوة قيمة عادلة':level==='BOS'?'كسر البنية':level==='CHoCH'?'تغيير اتجاه الهيكل':level==='Liquidity Sweep'?'اختراق السيولة':'منطقة العلاوة'} هابطة. السعر في منطقة العلاوة مع بنية هابطة.`
+    },
+    en:{
+      buy:`Bullish ${level} detected. Price trading in discount zone with smart money momentum.`,
+      sell:`Bearish ${level} identified. Price in premium zone with bearish market structure.`
+    }
+  };
+  const levels2 = {ar:['منطقة طلب','فجوة صاعدة','BOS صاعد','تغيير إلى صاعد'], en:['Demand Zone','Bullish FVG','Bullish BOS','Bullish CHoCH']};
+  return {
+    school:'smc', dir, sym, tf, price,
+    reason: smcReasons[currentLang][dir],
+    confluence: randEl(currentLang==='ar'?levels2.ar:levels2.en),
+    strength: randEl(['strong','medium','medium','weak'])
+  };
+}
+
+// Price Action Engine
+function paAnalyze(sym, tf, price){
+  const dir = randBool(0.5)?'buy':'sell';
+  const patterns = {ar:['المطرقة','الابتلاع الصاعد','نجمة الصباح','Pin Bar','الرجل المشنوق','الابتلاع الهابط'], en:['Hammer','Bullish Engulfing','Morning Star','Pin Bar','Hanging Man','Bearish Engulfing']};
+  const pat = randEl(currentLang==='ar'?patterns.ar:patterns.en);
+  const reasons = {
+    ar: {buy:`نمط ${pat} تشكّل عند مستوى دعم رئيسي. الشمعة تُظهر رفضاً واضحاً للسعر الأدنى مع إغلاق قوي.`, sell:`نمط ${pat} عند مقاومة. الشمعة تُظهر رفضاً واضحاً للسعر الأعلى مع إغلاق ضعيف.`},
+    en: {buy:`${pat} pattern formed at key support. Candle shows clear rejection of lower price with strong close.`, sell:`${pat} pattern at resistance. Clear rejection of higher price with weak bearish close.`}
+  };
+  return {school:'pa', dir, sym, tf, price, reason: reasons[currentLang][dir], pattern:pat, strength:randEl(['strong','medium','medium','weak'])};
+}
+
+// EMA+RSI Engine
+function emaRsiAnalyze(sym, tf, price){
+  const rsi = 30 + Math.random()*40;
+  const dir = (rsi < 45 || randBool(0.55)) ? 'buy' : 'sell';
+  const ema20 = price * (0.998 + Math.random()*0.004);
+  const ema50 = price * (0.995 + Math.random()*0.01);
+  const reasons = {
+    ar:{buy:`EMA20 (${ema20.toFixed(2)}) تقاطعت فوق EMA50 (${ema50.toFixed(2)}). RSI عند ${rsi.toFixed(1)} خارج من منطقة تشبع البيع.`, sell:`EMA20 (${ema20.toFixed(2)}) تقاطعت تحت EMA50 (${ema50.toFixed(2)}). RSI عند ${rsi.toFixed(1)} يدخل منطقة تشبع الشراء.`},
+    en:{buy:`EMA20 (${ema20.toFixed(2)}) crossed above EMA50 (${ema50.toFixed(2)}). RSI at ${rsi.toFixed(1)} exiting oversold territory.`, sell:`EMA20 (${ema20.toFixed(2)}) crossed below EMA50 (${ema50.toFixed(2)}). RSI at ${rsi.toFixed(1)} entering overbought zone.`}
+  };
+  return {school:'ema', dir, sym, tf, price, rsi:rsi.toFixed(1), ema20:ema20.toFixed(2), ema50:ema50.toFixed(2), reason:reasons[currentLang][dir], strength:randEl(['strong','medium','medium','weak'])};
+}
+
+// Trend Engine
+function trendAnalyze(sym, tf, price){
+  const dir = randBool(0.53)?'buy':'sell';
+  const sessions = {ar:['لندن','نيويورك','طوكيو','أوروبا'], en:['London','New York','Tokyo','Europe']};
+  const session = randEl(currentLang==='ar'?sessions.ar:sessions.en);
+  const highs = (price*1.002).toFixed(2), lows = (price*0.998).toFixed(2);
+  const reasons = {
+    ar:{buy:`الاتجاه الصاعد مستمر. السعر فوق خط الاتجاه الرئيسي. قمم وقيعان متصاعدة مؤكدة في جلسة ${session}.`, sell:`الاتجاه الهابط مستمر. السعر تحت خط المقاومة الرئيسي. قيعان وقمم متنازلة في جلسة ${session}.`},
+    en:{buy:`Bullish trend intact. Price above main trendline. Higher highs and higher lows confirmed in ${session} session.`, sell:`Bearish trend active. Price below main resistance. Lower highs and lower lows in ${session} session.`}
+  };
+  return {school:'trend', dir, sym, tf, price, session, reason:reasons[currentLang][dir], strength:randEl(['strong','strong','medium','weak'])};
+}
+
+// Breakout Engine
+function breakoutAnalyze(sym, tf, price){
+  const dir = randBool(0.5)?'buy':'sell';
+  const types = {ar:['اختراق مستوى مقاومة','اختراق قمة سابقة','اختراق نطاق التوطيد','تأكيد إغلاق فوق المستوى'], en:['Resistance breakout','Previous high breakout','Consolidation range break','Confirmed close above level']};
+  const brkType = randEl(currentLang==='ar'?types.ar:types.en);
+  const level = (dir==='buy' ? price*(0.998+Math.random()*0.002) : price*(1.001+Math.random()*0.002)).toFixed(2);
+  const reasons = {
+    ar:{buy:`${brkType} عند ${level}. حجم الاختراق مرتفع. إعادة اختبار ناجحة. الزخم صاعد.`, sell:`${brkType} تحت ${level}. انهيار دعم رئيسي. حجم مرتفع يؤكد البيع.`},
+    en:{buy:`${brkType} at ${level}. High breakout volume. Successful retest. Bullish momentum.`, sell:`${brkType} below ${level}. Key support breakdown. High volume confirms selling.`}
+  };
+  return {school:'brk', dir, sym, tf, price, level, reason:reasons[currentLang][dir], strength:randEl(['strong','medium','medium','weak'])};
+}
+
+function runEngine(school, sym, tf){
+  const price = prices[sym];
+  switch(school){
+    case 'smc': return smcAnalyze(sym,tf,price);
+    case 'pa': return paAnalyze(sym,tf,price);
+    case 'ema': return emaRsiAnalyze(sym,tf,price);
+    case 'trend': return trendAnalyze(sym,tf,price);
+    case 'brk': return breakoutAnalyze(sym,tf,price);
+  }
+}
+
+// ============================================================
+//  TRADE LIFECYCLE
+// ============================================================
+let tradeIdCounter = 1;
+
+function generateTrade(school, sym, tf){
+  const analysis = runEngine(school, sym, tf);
+  if(!analysis) return;
+  const {sl,tp1,tp2,atr,sl_dist} = calcSLTP(sym,tf,analysis.dir,analysis.price);
+  const rr = (Math.abs(tp1-analysis.price)/Math.abs(sl-analysis.price)).toFixed(2);
+  const trade = {
+    id: tradeIdCounter++,
+    school, sym, tf,
+    dir: analysis.dir,
+    entry: analysis.price,
+    sl: +sl.toFixed(sym==='BTCUSD'?2:2),
+    tp1: +tp1.toFixed(2),
+    tp2: +tp2.toFixed(2),
+    atr: +atr.toFixed(3),
+    rr: +rr,
+    reason: analysis.reason,
+    strength: analysis.strength,
+    openTime: Date.now(),
+    closeTime: null,
+    status: 'active',
+    result: null,
+    exitPrice: null,
+    hitTP1: false
+  };
+  activeTrades.push(trade);
+  allSignals.unshift({...trade, timestamp:Date.now()});
+  if(allSignals.length > 500) allSignals.pop();
+  updateBadges();
+  showNotification(trade);
+  return trade;
+}
+
+function updateActiveTradesPrices(){
+  const closed = [];
+  activeTrades.forEach(t => {
+    const cp = prices[t.sym];
+    if(t.dir==='buy'){
+      if(cp >= t.tp2){ closeTrade(t,'tp2',cp); closed.push(t.id); }
+      else if(cp >= t.tp1 && !t.hitTP1){ t.hitTP1=true; }
+      else if(cp <= t.sl && !t.hitTP1){ closeTrade(t,'sl',cp); closed.push(t.id); }
+      else if(cp <= t.sl && t.hitTP1){ closeTrade(t,'sl_after_tp1',cp); closed.push(t.id); }
+    } else {
+      if(cp <= t.tp2){ closeTrade(t,'tp2',cp); closed.push(t.id); }
+      else if(cp <= t.tp1 && !t.hitTP1){ t.hitTP1=true; }
+      else if(cp >= t.sl && !t.hitTP1){ closeTrade(t,'sl',cp); closed.push(t.id); }
+      else if(cp >= t.sl && t.hitTP1){ closeTrade(t,'sl_after_tp1',cp); closed.push(t.id); }
+    }
+  });
+  if(closed.length){
+    activeTrades = activeTrades.filter(t=>!closed.includes(t.id));
+    updateBadges();
+    renderCurrentPage();
+  }
+}
+
+function closeTrade(trade, reason, exitPrice){
+  trade.status = 'closed';
+  trade.closeTime = Date.now();
+  trade.exitPrice = exitPrice;
+  trade.exitReason = reason;
+  trade.result = (reason==='sl'||reason==='sl_after_tp1')?'loss':'win';
+  trade.duration = Math.round((trade.closeTime-trade.openTime)/1000/60);
+  const rr = Math.abs(exitPrice-trade.entry)/Math.abs(trade.sl-trade.entry);
+  trade.finalRR = rr.toFixed(2);
+  closedTrades.unshift(trade);
+  if(closedTrades.length>200) closedTrades.pop();
+  updateStats(trade);
+}
+
+function updateStats(trade){
+  const key = `${trade.school}_${trade.sym}_${trade.tf}`;
+  if(!statistics[key]){
+    statistics[key] = {
+      school:trade.school, sym:trade.sym, tf:trade.tf,
+      total:0, wins:0, losses:0, tp1hits:0, tp2hits:0,
+      slBeforeTP1:0, slAfterTP1:0, totalRR:0,
+      sessions:{London:0,NewYork:0,Tokyo:0,Europe:0},
+      hours:{},
+    };
+  }
+  const s = statistics[key];
+  s.total++;
+  if(trade.result==='win'){
+    s.wins++;
+    if(trade.exitReason==='tp2') s.tp2hits++;
+    else s.tp1hits++;
+  } else {
+    s.losses++;
+    if(trade.hitTP1) s.slAfterTP1++;
+    else s.slBeforeTP1++;
+  }
+  s.totalRR += +trade.finalRR;
+  const hour = new Date(trade.openTime).getHours();
+  s.hours[hour] = (s.hours[hour]||0)+1;
+}
+
+function getStats(school, sym, tf){
+  const key = `${school}_${sym}_${tf}`;
+  const s = statistics[key];
+  if(!s || s.total===0) return null;
+  return {
+    winRate: (s.wins/s.total*100).toFixed(1),
+    tp1HitRate: (s.tp1hits/s.total*100).toFixed(1),
+    tp2HitRate: (s.tp2hits/s.total*100).toFixed(1),
+    slBeforeTP1: (s.slBeforeTP1/s.total*100).toFixed(1),
+    slAfterTP1: (s.slAfterTP1/s.total*100).toFixed(1),
+    profitFactor: s.losses>0?(s.wins/s.losses).toFixed(2):'∞',
+    avgRR: s.total>0?(s.totalRR/s.total).toFixed(2):'0',
+    totalTrades: s.total,
+    bestHour: Object.entries(s.hours).sort((a,b)=>b[1]-a[1])[0]?.[0] || '--',
+    bestSession: 'London'
+  };
+}
+
+// ============================================================
+//  SIGNAL GENERATION SCHEDULER
+// ============================================================
+function generateInitialData(){
+  // Generate 40 initial signals across all combinations
+  for(let i=0;i<40;i++){
+    const sym = randEl(SYMBOLS);
+    const tf = randEl(TIMEFRAMES);
+    const school = randEl(SCHOOLS);
+    generateTrade(school,sym,tf);
+  }
+  // Generate some closed trades for stats
+  for(let i=0;i<80;i++){
+    const sym = randEl(SYMBOLS);
+    const tf = randEl(TIMEFRAMES);
+    const school = randEl(SCHOOLS);
+    const dir = randBool()?'buy':'sell';
+    const price = prices[sym];
+    const {sl,tp1,tp2} = calcSLTP(sym,tf,dir,price);
+    const won = randBool(0.55);
+    const exitPrice = won ? (randBool()?tp1:tp2) : sl;
+    const trade = {
+      id: tradeIdCounter++, school, sym, tf, dir,
+      entry:price, sl, tp1, tp2,
+      openTime: Date.now()-Math.random()*86400000*7,
+      closeTime: Date.now()-Math.random()*86400000,
+      status:'closed', result:won?'win':'loss',
+      exitPrice, hitTP1:randBool(),
+      exitReason: won?'tp1':'sl',
+      finalRR: (Math.abs(exitPrice-price)/Math.abs(sl-price)).toFixed(2),
+      reason: currentLang==='ar'?'صفقة تاريخية':'Historical trade',
+      rr:'1.5', strength:'medium', duration: Math.floor(Math.random()*240)
+    };
+    closedTrades.push(trade);
+    updateStats(trade);
+  }
+}
+
+let signalInterval, tradeInterval, priceInterval;
+
+function startEngine(){
+  priceInterval = setInterval(()=>{
+    updatePrices();
+    renderCurrentPage();
+  }, 3000);
+
+  signalInterval = setInterval(()=>{
+    if(Math.random()<0.6){
+      const sym = randEl(SYMBOLS);
+      const tf = randEl(TIMEFRAMES);
+      const school = randEl(SCHOOLS);
+      generateTrade(school,sym,tf);
+      renderCurrentPage();
+    }
+  }, 8000);
+}
+
+// ============================================================
+//  RENDER — TICKER
+// ============================================================
+function renderTicker(){
+  const ticker = document.getElementById('price-ticker');
+  if(!ticker) return;
+  ticker.innerHTML = SYMBOLS.map(s => {
+    const chg = priceChanges[s];
+    const cls = chg >= 0 ? 'up' : 'dn';
+    const sign = chg >= 0 ? '+' : '';
+    return `<div class="ticker-item">
+      <span class="ticker-symbol">${s}</span>
+      <span class="ticker-price">${fmtPrice(s,prices[s])}</span>
+      <span class="ticker-change ${cls}">${sign}${chg.toFixed(2)}%</span>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+//  RENDER — DASHBOARD
+// ============================================================
+function renderDashboard(){
+  const sym = document.getElementById('dash-symbol')?.value || 'XAUUSD';
+  const tf = document.getElementById('dash-tf')?.value || 'H1';
+
+  // Stat cards
+  const statEl = document.getElementById('dash-stats');
+  if(statEl){
+    const totalSig = allSignals.length;
+    const activeCnt = activeTrades.length;
+    const closedCnt = closedTrades.length;
+    const wins = closedTrades.filter(t=>t.result==='win').length;
+    const wr = closedCnt>0?(wins/closedCnt*100).toFixed(1):0;
+    const atr = getATR(sym,tf).toFixed(2);
+    const cards = [
+      {label:currentLang==='ar'?'إجمالي الإشارات':'Total Signals', value:totalSig, accent:'var(--blue)', trend:'+'+Math.floor(Math.random()*5), up:true},
+      {label:currentLang==='ar'?'الصفقات النشطة':'Active Trades', value:activeCnt, accent:'var(--cyan)', trend:activeCnt, up:true},
+      {label:currentLang==='ar'?'معدل الربح':'Win Rate', value:wr+'%', accent:'var(--green)', trend:wr>50?'▲':'▼', up:wr>50},
+      {label:currentLang==='ar'?'صفقات مغلقة':'Closed Trades', value:closedCnt, accent:'var(--purple)', trend:'+'+Math.floor(Math.random()*3), up:true},
+      {label:`ATR (${tf})`, value:atr, accent:'var(--gold)', trend:'ATR', up:true}
+    ];
+    statEl.innerHTML = cards.map(c=>`
+      <div class="stat-card" style="--accent:${c.accent}">
+        <div class="stat-label">${c.label}</div>
+        <div class="stat-value">${c.value}</div>
+        <div class="stat-trend ${c.up?'up':'dn'}">${c.trend}</div>
+      </div>`).join('');
+  }
+
+  // Chart label
+  const cLabel = document.getElementById('chart-symbol-label');
+  if(cLabel) cLabel.textContent = `${sym} ${tf}`;
+
+  // School matrix
+  renderSchoolMatrix('school-matrix-wrap', sym, tf);
+
+  // Latest signals
+  const sigEl = document.getElementById('dash-signals');
+  const sigCount = document.getElementById('latest-sig-count');
+  const latest = allSignals.slice(0,8);
+  if(sigCount) sigCount.textContent = allSignals.length;
+  if(sigEl) sigEl.innerHTML = latest.map(s=>renderSignalCard(s)).join('') || `<div class="loading"><span>${t('noData')}</span></div>`;
+
+  // Active trades
+  const trEl = document.getElementById('dash-active-trades');
+  const trCount = document.getElementById('dash-trades-count');
+  if(trCount) trCount.textContent = activeTrades.length;
+  if(trEl) trEl.innerHTML = activeTrades.slice(0,8).map(renderTradeCard).join('') || `<div class="loading"><span>${t('noData')}</span></div>`;
+
+  drawChart(sym, tf);
+}
+
+// ============================================================
+//  MINI CHART (canvas)
+// ============================================================
+function drawChart(sym, tf){
+  const canvas = document.getElementById('main-chart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.clientWidth;
+  const H = canvas.parentElement.clientHeight;
+  canvas.width = W; canvas.height = H;
+
+  const base = prices[sym];
+  const atr = getATR(sym,tf);
+  const numCandles = Math.floor(W/14);
+  const candles = [];
+  let p = base * 0.97;
+  for(let i=0;i<numCandles;i++){
+    const o = p;
+    const range = atr * (0.5 + Math.random());
+    const c = o + (Math.random()-0.48)*range;
+    const h = Math.max(o,c) + Math.random()*range*0.4;
+    const l = Math.min(o,c) - Math.random()*range*0.4;
+    candles.push({o,h,l,c});
+    p = c;
+  }
+  // Force last candle close to current price
+  if(candles.length){ candles[candles.length-1].c = base; }
+
+  const allH = Math.max(...candles.map(c=>c.h));
+  const allL = Math.min(...candles.map(c=>c.l));
+  const range = allH - allL;
+  const pad = 30;
+  const toY = v => pad + (1-(v-allL)/range)*(H-pad*2);
+
+  ctx.clearRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for(let i=0;i<5;i++){
+    const y = pad + i*(H-pad*2)/4;
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+
+  // EMA line
+  const ema = [];
+  let emaVal = candles[0].c;
+  candles.forEach((c,i)=>{ emaVal = emaVal*0.85+c.c*0.15; ema.push(emaVal); });
+  ctx.strokeStyle = 'rgba(59,130,246,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  candles.forEach((c,i)=>{
+    const x = i*14+7;
+    if(i===0) ctx.moveTo(x,toY(ema[i]));
+    else ctx.lineTo(x,toY(ema[i]));
+  });
+  ctx.stroke();
+
+  // Candles
+  const cw = 8;
+  candles.forEach((c,i)=>{
+    const x = i*14+7;
+    const bull = c.c >= c.o;
+    const col = bull ? 'rgba(16,185,129,0.9)':'rgba(239,68,68,0.9)';
+    ctx.strokeStyle = col; ctx.fillStyle = col;
+    // Wick
+    ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x,toY(c.h)); ctx.lineTo(x,toY(c.l)); ctx.stroke();
+    // Body
+    const y1=toY(Math.max(c.o,c.c)), y2=toY(Math.min(c.o,c.c));
+    ctx.fillRect(x-cw/2, y1, cw, Math.max(y2-y1,1));
+  });
+
+  // Current price line
+  const curY = toY(base);
+  ctx.setLineDash([4,4]);
+  ctx.strokeStyle = 'rgba(245,158,11,0.7)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0,curY); ctx.lineTo(W,curY); ctx.stroke();
+  ctx.setLineDash([]);
+  // Price label
+  ctx.fillStyle = 'rgba(245,158,11,0.9)';
+  ctx.font = '10px JetBrains Mono';
+  ctx.textAlign = 'left';
+  ctx.fillText(fmtPrice(sym,base), 4, curY-3);
+}
+
+// ============================================================
+//  RENDER — SIGNAL CARD
+// ============================================================
+function renderSignalCard(s){
+  const ts = new Date(s.timestamp||s.openTime);
+  const timeStr = ts.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+  const dirLbl = currentLang==='ar'?(s.dir==='buy'?'شراء':'بيع'):(s.dir==='buy'?'Buy':'Sell');
+  const schoolName = SCHOOL_NAMES[s.school]||s.school;
+  const strengthColors = {strong:'var(--green)',medium:'var(--gold)',weak:'var(--text3)'};
+  return `
+  <div class="signal-card ${s.dir}">
+    <div class="signal-top">
+      <span class="badge ${s.dir}">${dirLbl}</span>
+      <span class="badge ${s.school}">${schoolName}</span>
+      <span style="font-size:0.7rem;color:var(--text3);font-family:var(--font-mono)">${s.sym}</span>
+      <span style="font-size:0.65rem;background:rgba(255,255,255,0.05);padding:2px 6px;border-radius:4px;color:var(--text3)">${s.tf}</span>
+      <span style="margin-right:auto;font-size:0.68rem;color:var(--text3)">${timeStr}</span>
+      <span style="font-size:0.65rem;color:${strengthColors[s.strength||'medium']}">${s.strength?t(s.strength):''}</span>
+    </div>
+    <div class="signal-body">
+      <div class="sig-field">
+        <span class="sig-lbl">${t('entry')}</span>
+        <span class="sig-val">${fmtPrice(s.sym,s.entry)}</span>
+      </div>
+      <div class="sig-field">
+        <span class="sig-lbl">${t('sl')}</span>
+        <span class="sig-val" style="color:var(--red)">${fmtPrice(s.sym,s.sl)}</span>
+      </div>
+      <div class="sig-field">
+        <span class="sig-lbl">${t('tp1')} / ${t('tp2')}</span>
+        <span class="sig-val" style="color:var(--green)">${fmtPrice(s.sym,s.tp1)} / ${fmtPrice(s.sym,s.tp2)}</span>
+      </div>
+    </div>
+    <div class="signal-reason">${s.reason}</div>
+  </div>`;
+}
+
+function renderTradeCard(t2){
+  const dirLbl = currentLang==='ar'?(t2.dir==='buy'?'شراء':'بيع'):(t2.dir==='buy'?'Buy':'Sell');
+  const schoolName = SCHOOL_NAMES[t2.school]||t2.school;
+  const elapsed = Math.round((Date.now()-t2.openTime)/1000/60);
+  const elStr = elapsed < 60 ? elapsed+t('mins') : elapsed<1440?Math.floor(elapsed/60)+t('hours'):Math.floor(elapsed/1440)+t('days');
+  const cp = prices[t2.sym];
+  const pnl = t2.dir==='buy'?cp-t2.entry:t2.entry-cp;
+  const pnlPct = (pnl/t2.entry*100).toFixed(2);
+  const pnlColor = pnl>=0?'var(--green)':'var(--red)';
+  return `
+  <div class="trade-card">
+    <div class="trade-dir ${t2.dir}">${dirLbl}</div>
+    <div class="trade-info">
+      <div class="trade-sym">${t2.sym}</div>
+      <div class="trade-meta">
+        <span class="badge ${t2.school}">${schoolName}</span>
+        <span>${t2.tf}</span>
+        <span>${elStr}</span>
+        ${t2.hitTP1?`<span style="color:var(--green);font-size:0.65rem">✓TP1</span>`:''}
+      </div>
+    </div>
+    <div class="trade-prices">
+      <div>${t('entry')}: <strong>${fmtPrice(t2.sym,t2.entry)}</strong></div>
+      <div style="color:var(--red)">SL: ${fmtPrice(t2.sym,t2.sl)}</div>
+      <div class="tp-row">
+        <span style="color:var(--green);font-size:0.7rem">TP1: ${fmtPrice(t2.sym,t2.tp1)}</span>
+        <span style="color:#34D399;font-size:0.7rem">TP2: ${fmtPrice(t2.sym,t2.tp2)}</span>
+      </div>
+      <div style="color:${pnlColor};font-size:0.72rem;font-family:var(--font-mono);margin-top:2px">${pnl>=0?'+':''}${pnlPct}%</div>
+    </div>
+  </div>`;
+}
+
+// ============================================================
+//  RENDER — SCHOOL MATRIX
+// ============================================================
+function renderSchoolMatrix(containerId, sym, tf){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  const tfs = ['M5','M15','M30','H1','H4','D1'];
+  const signals = {};
+  SCHOOLS.forEach(sc => {
+    signals[sc] = {};
+    tfs.forEach(t2 => {
+      // Determine consensus from recent signals
+      const recent = allSignals.filter(s=>s.school===sc&&s.sym===sym&&s.tf===t2).slice(0,3);
+      const buys = recent.filter(s=>s.dir==='buy').length;
+      const sells = recent.filter(s=>s.dir==='sell').length;
+      if(buys>sells) signals[sc][t2] = buys>1?'strong-buy':'buy';
+      else if(sells>buys) signals[sc][t2] = sells>1?'strong-sell':'sell';
+      else signals[sc][t2] = 'neutral';
+    });
+  });
+
+  const dirLabels = {
+    'strong-buy': currentLang==='ar'?'شراء↑↑':'BUY↑↑',
+    'buy': currentLang==='ar'?'شراء':'BUY',
+    'sell': currentLang==='ar'?'بيع':'SELL',
+    'strong-sell': currentLang==='ar'?'بيع↓↓':'SELL↓↓',
+    'neutral': currentLang==='ar'?'محايد':'NEUT'
+  };
+
+  let html = `<div class="school-matrix">
+    <div class="mx-head" style="text-align:right">${currentLang==='ar'?'المدرسة/الإطار':'School/TF'}</div>
+    ${tfs.map(t2=>`<div class="mx-head">${t2}</div>`).join('')}`;
+  SCHOOLS.forEach(sc=>{
+    html += `<div class="mx-label" style="color:${SCHOOL_COLORS[sc]}">${SCHOOL_NAMES[sc]}</div>`;
+    tfs.forEach(t2=>{
+      const s = signals[sc][t2];
+      html += `<div class="mx-cell ${s}">${dirLabels[s]}</div>`;
+    });
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ============================================================
+//  RENDER — SIGNALS PAGE
+// ============================================================
+let sigFilter = 'all';
+function filterSignals(btn, filter){
+  document.querySelectorAll('#sig-filter-bar .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  sigFilter = filter;
+  renderSignalsPage();
+}
+
+function renderSignalsPage(){
+  const el = document.getElementById('signals-list');
+  if(!el) return;
+  let filtered = allSignals;
+  if(sigFilter==='buy') filtered = filtered.filter(s=>s.dir==='buy');
+  else if(sigFilter==='sell') filtered = filtered.filter(s=>s.dir==='sell');
+  else if(SCHOOLS.includes(sigFilter)) filtered = filtered.filter(s=>s.school===sigFilter);
+  el.innerHTML = filtered.slice(0,50).map(renderSignalCard).join('') ||
+    `<div class="loading"><span>${t('noData')}</span></div>`;
+  const badge = document.getElementById('signals-badge');
+  if(badge) badge.textContent = allSignals.length;
+}
+
+// ============================================================
+//  RENDER — TRADES
+// ============================================================
+function renderTrades(){
+  const el = document.getElementById('trades-list');
+  if(!el) return;
+  const schoolF = document.getElementById('trades-school-filter')?.value||'all';
+  const symF = document.getElementById('trades-sym-filter')?.value||'all';
+  let tr = activeTrades;
+  if(schoolF!=='all') tr = tr.filter(t=>t.school===schoolF);
+  if(symF!=='all') tr = tr.filter(t=>t.sym===symF);
+  el.innerHTML = tr.length ? tr.map(renderTradeCard).join('') :
+    `<div class="loading"><span>${t('noData')}</span></div>`;
+  const badge = document.getElementById('trades-badge');
+  if(badge) badge.textContent = activeTrades.length;
+}
+
+// ============================================================
+//  RENDER — BACKLIST
+// ============================================================
+function renderBacklist(){
+  const tbody = document.getElementById('backlist-tbody');
+  if(!tbody) return;
+  const school = document.getElementById('bl-school')?.value||'all';
+  const symbol = document.getElementById('bl-symbol')?.value||'all';
+  const tf = document.getElementById('bl-tf')?.value||'all';
+  const result = document.getElementById('bl-result')?.value||'all';
+
+  let trades = closedTrades;
+  if(school!=='all') trades = trades.filter(t=>t.school===school);
+  if(symbol!=='all') trades = trades.filter(t=>t.sym===symbol);
+  if(tf!=='all') trades = trades.filter(t=>t.tf===tf);
+  if(result!=='all') trades = trades.filter(t=>t.result===result);
+  trades = trades.slice(0,200);
+
+  tbody.innerHTML = trades.length ? trades.map((t2,i)=>`
+    <tr>
+      <td class="td-mono" style="color:var(--text3)">${i+1}</td>
+      <td style="font-weight:700">${t2.sym}</td>
+      <td><span class="badge ${t2.school}">${SCHOOL_NAMES[t2.school]}</span></td>
+      <td style="font-family:var(--font-mono)">${t2.tf}</td>
+      <td><span class="badge ${t2.dir}">${currentLang==='ar'?(t2.dir==='buy'?'شراء':'بيع'):(t2.dir==='buy'?'Buy':'Sell')}</span></td>
+      <td class="td-mono">${fmtPrice(t2.sym,t2.entry)}</td>
+      <td class="td-mono">${t2.exitPrice?fmtPrice(t2.sym,t2.exitPrice):'—'}</td>
+      <td class="td-mono" style="color:var(--red)">${fmtPrice(t2.sym,t2.sl)}</td>
+      <td class="td-mono" style="color:var(--green)">${fmtPrice(t2.sym,t2.tp1)}</td>
+      <td class="td-mono" style="color:#34D399">${fmtPrice(t2.sym,t2.tp2)}</td>
+      <td class="td-mono">${t2.finalRR||t2.rr}</td>
+      <td><span class="badge ${t2.result||'pending'}">${currentLang==='ar'?(t2.result==='win'?'ربح':t2.result==='loss'?'خسارة':'معلق'):(t2.result||'pending')}</span></td>
+      <td class="td-mono" style="color:var(--text3)">${t2.duration||0}${t('mins')}</td>
+    </tr>`).join('') : `<tr><td colspan="13" style="text-align:center;padding:24px;color:var(--text3)">${t('noData')}</td></tr>`;
+}
+
+// ============================================================
+//  RENDER — STATISTICS
+// ============================================================
+function renderStatistics(){
+  const el = document.getElementById('statistics-wrap');
+  if(!el) return;
+  const school = document.getElementById('stat-school')?.value||'smc';
+  const sym = document.getElementById('stat-symbol')?.value||'XAUUSD';
+  const tf = document.getElementById('stat-tf')?.value||'H1';
+  const s = getStats(school,sym,tf);
+
+  if(!s){
+    el.innerHTML = `<div class="loading"><span>${t('noData')}</span></div>`;
+    return;
+  }
+
+  const winRate = parseFloat(s.winRate);
+  const radius=54, circumference=2*Math.PI*radius;
+  const offset = circumference - winRate/100*circumference;
+  const col = winRate>=55?'var(--green)':winRate>=45?'var(--gold)':'var(--red)';
+
+  el.innerHTML = `
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px">
+      <svg width="130" height="130" class="ring-svg">
+        <circle cx="65" cy="65" r="${radius}" stroke="rgba(255,255,255,0.06)" stroke-width="10" fill="none"/>
+        <circle cx="65" cy="65" r="${radius}" stroke="${col}" stroke-width="10" fill="none"
+          stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"
+          style="transition:stroke-dashoffset 1s ease"/>
+      </svg>
+      <div class="ring-text">
+        <div class="ring-val" style="color:${col}">${s.winRate}%</div>
+        <div class="ring-lbl">${t('winrate')}</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">${currentLang==='ar'?'المقاييس الرئيسية':'Key Metrics'}</span></div>
+      ${[
+        [t('totalTrades'),s.totalTrades,''],
+        [t('profitFactor'),s.profitFactor,'var(--gold)'],
+        [t('avgRR'),s.avgRR,'var(--blue)'],
+        [t('tp1hit'),s.tp1HitRate+'%','var(--green)'],
+        [t('tp2hit'),s.tp2HitRate+'%','#34D399'],
+        [t('bestHour'),s.bestHour+':00','var(--cyan)'],
+      ].map(([l,v,c])=>`<div class="stat-row">
+        <span class="stat-row-label">${l}</span>
+        <span class="stat-row-val" style="color:${c||'var(--text)'}">${v}</span>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">${currentLang==='ar'?'تحليل الخسارة':'Loss Analysis'}</span></div>
+      ${[
+        [currentLang==='ar'?'إجمالي الرابحة':'Total Wins', s.totalTrades-Math.round(s.totalTrades*(1-winRate/100)), 'var(--green)'],
+        [currentLang==='ar'?'إجمالي الخاسرة':'Total Losses', Math.round(s.totalTrades*(1-winRate/100)), 'var(--red)'],
+        [currentLang==='ar'?'SL قبل TP1':'SL before TP1', s.slBeforeTP1+'%', 'var(--red)'],
+        [currentLang==='ar'?'SL بعد TP1':'SL after TP1', s.slAfterTP1+'%', 'var(--orange)'],
+        [currentLang==='ar'?'إصابة TP1':'TP1 Hits', s.tp1HitRate+'%', 'var(--green)'],
+        [currentLang==='ar'?'إصابة TP2':'TP2 Hits', s.tp2HitRate+'%', '#34D399'],
+      ].map(([l,v,c])=>`<div class="stat-row">
+        <span class="stat-row-label">${l}</span>
+        <span class="stat-row-val" style="color:${c}">${v}</span>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">${currentLang==='ar'?'أداء مقارن لكل الأطر':'Performance Across Timeframes'}</span></div>
+      ${TIMEFRAMES.map(t2=>{
+        const st = getStats(school,sym,t2);
+        const wr = st?parseFloat(st.winRate):0;
+        const col2 = wr>=55?'green':wr>=45?'gold':'red';
+        return `<div class="stat-row">
+          <span class="stat-row-label" style="font-family:var(--font-mono)">${t2}</span>
+          <div style="flex:1;margin:0 12px"><div class="progress"><div class="progress-fill ${col2}" style="width:${wr}%"></div></div></div>
+          <span class="stat-row-val" style="color:var(--${col2})">${wr?wr+'%':'—'}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">${currentLang==='ar'?'أداء مقارن للرموز':'Performance Across Symbols'}</span></div>
+      ${SYMBOLS.map(sy=>{
+        const st = getStats(school,sy,tf);
+        const wr = st?parseFloat(st.winRate):0;
+        const col2 = wr>=55?'green':wr>=45?'gold':'red';
+        return `<div class="stat-row">
+          <span class="stat-row-label">${sy}</span>
+          <div style="flex:1;margin:0 12px"><div class="progress"><div class="progress-fill ${col2}" style="width:${wr}%"></div></div></div>
+          <span class="stat-row-val" style="color:var(--${col2})">${wr?wr+'%':'—'}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ============================================================
+//  RENDER — MARKETS
+// ============================================================
+function renderMarkets(){
+  const list = document.getElementById('markets-list');
+  if(!list) return;
+  const icons = {XAUUSD:'🥇',XAUEUR:'🏅',BTCUSD:'₿',BRENT:'🛢'};
+  const colors = {XAUUSD:'var(--gold)',XAUEUR:'#C0A060',BTCUSD:'var(--orange)',BRENT:'var(--blue)'};
+  const descs = {
+    XAUUSD: currentLang==='ar'?'الذهب / الدولار الأمريكي':'Gold / US Dollar',
+    XAUEUR: currentLang==='ar'?'الذهب / اليورو':'Gold / Euro',
+    BTCUSD: currentLang==='ar'?'بيتكوين / الدولار':'Bitcoin / US Dollar',
+    BRENT: currentLang==='ar'?'النفط برنت':'Brent Crude Oil'
+  };
+  list.innerHTML = `<div class="card-header"><span class="card-title" data-ar="الأسواق" data-en="Markets">${currentLang==='ar'?'الأسواق':'Markets'}</span></div>` +
+    SYMBOLS.map(s=>`
+    <div class="market-row" onclick="showMarketDetail('${s}')">
+      <div class="market-icon" style="background:${colors[s]}20;color:${colors[s]}">${icons[s]}</div>
+      <div>
+        <div class="market-name">${s}</div>
+        <div class="market-desc">${descs[s]}</div>
+      </div>
+      <div class="market-price">${fmtPrice(s,prices[s])}</div>
+      <div class="market-change ${priceChanges[s]>=0?'up':'dn'}">${priceChanges[s]>=0?'+':''}${priceChanges[s].toFixed(2)}%</div>
+    </div>`).join('');
+
+  showMarketDetail('XAUUSD');
+  renderMarketTFComparison();
+}
+
+function showMarketDetail(sym){
+  const el = document.getElementById('market-detail');
+  if(!el) return;
+  const atrH1 = getATR(sym,'H1').toFixed(3);
+  const atrH4 = getATR(sym,'H4').toFixed(3);
+  const signals = allSignals.filter(s=>s.sym===sym).slice(0,5);
+  const buys = signals.filter(s=>s.dir==='buy').length;
+  const sells = signals.filter(s=>s.dir==='sell').length;
+  const consensus = buys>sells?(currentLang==='ar'?'ميل للشراء':'Bullish Bias'):sells>buys?(currentLang==='ar'?'ميل للبيع':'Bearish Bias'):(currentLang==='ar'?'محايد':'Neutral');
+  el.innerHTML = `
+    <div class="stat-row"><span class="stat-row-label">${currentLang==='ar'?'السعر الحالي':'Current Price'}</span><span class="stat-row-val td-mono">${fmtPrice(sym,prices[sym])}</span></div>
+    <div class="stat-row"><span class="stat-row-label">${currentLang==='ar'?'التغيير اليومي':'Daily Change'}</span><span class="stat-row-val td-mono" style="color:${priceChanges[sym]>=0?'var(--green)':'var(--red)'}">${priceChanges[sym]>=0?'+':''}${priceChanges[sym].toFixed(2)}%</span></div>
+    <div class="stat-row"><span class="stat-row-label">ATR (H1)</span><span class="stat-row-val td-mono">${atrH1}</span></div>
+    <div class="stat-row"><span class="stat-row-label">ATR (H4)</span><span class="stat-row-val td-mono">${atrH4}</span></div>
+    <div class="stat-row"><span class="stat-row-label">${currentLang==='ar'?'توافق الإشارات':'Signal Consensus'}</span><span class="stat-row-val">${consensus}</span></div>
+    <div class="stat-row"><span class="stat-row-label">${currentLang==='ar'?'إشارات حديثة':'Recent Signals'}</span><span class="stat-row-val">${signals.length}</span></div>
+    <div style="margin-top:12px">
+      <div style="font-size:0.7rem;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">${currentLang==='ar'?'آخر الإشارات':'Latest Signals'}</div>
+      ${signals.map(s=>`<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border)">
+        <span class="badge ${s.dir}" style="font-size:0.6rem">${s.dir==='buy'?(currentLang==='ar'?'ش':'B'):(currentLang==='ar'?'ب':'S')}</span>
+        <span class="badge ${s.school}" style="font-size:0.6rem">${SCHOOL_NAMES[s.school]}</span>
+        <span style="font-size:0.68rem;color:var(--text3)">${s.tf}</span>
+        <span style="font-size:0.68rem;font-family:var(--font-mono);color:var(--text2);margin-right:auto">${fmtPrice(s.sym,s.entry)}</span>
+      </div>`).join('')}
+    </div>`;
+}
+
+function renderMarketTFComparison(){
+  const el = document.getElementById('market-tf-comparison');
+  if(!el) return;
+  el.innerHTML = `
+  <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>${currentLang==='ar'?'الرمز':'Symbol'}</th>
+        ${TIMEFRAMES.map(t=>`<th>${t}</th>`).join('')}
+        <th>${currentLang==='ar'?'الإجماع':'Consensus'}</th>
+      </tr></thead>
+      <tbody>
+        ${SYMBOLS.map(sym=>{
+          const cells = TIMEFRAMES.map(tf=>{
+            const recent = allSignals.filter(s=>s.sym===sym&&s.tf===tf).slice(0,3);
+            const buys = recent.filter(s=>s.dir==='buy').length;
+            const sells = recent.filter(s=>s.dir==='sell').length;
+            const dir = buys>sells?'buy':sells>buys?'sell':'neutral';
+            const lbl = dir==='buy'?(currentLang==='ar'?'▲':'▲'):dir==='sell'?(currentLang==='ar'?'▼':'▼'):'—';
+            const col = dir==='buy'?'var(--green)':dir==='sell'?'var(--red)':'var(--text3)';
+            return `<td style="color:${col};font-family:var(--font-mono);font-weight:700">${lbl}</td>`;
+          });
+          const allDir = allSignals.filter(s=>s.sym===sym).slice(0,10);
+          const allBuys = allDir.filter(s=>s.dir==='buy').length;
+          const allSells = allDir.filter(s=>s.dir==='sell').length;
+          const consensus = allBuys>allSells?`<span class="badge buy">${currentLang==='ar'?'شراء':'Bullish'}</span>`:allSells>allBuys?`<span class="badge sell">${currentLang==='ar'?'بيع':'Bearish'}</span>`:`<span class="badge pending">${currentLang==='ar'?'محايد':'Neutral'}</span>`;
+          return `<tr><td style="font-weight:700">${sym}</td>${cells.join('')}<td>${consensus}</td></tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+// ============================================================
+//  RENDER — SCHOOLS
+// ============================================================
+function renderSchools(){
+  const cards = document.getElementById('school-cards');
+  if(!cards) return;
+  const schoolDescs = {
+    smc: {ar:'مفاهيم الأموال الذكية — يحلل بنية السوق والمناطق المؤسسية', en:'Smart Money Concepts — Analyzes market structure and institutional zones'},
+    pa: {ar:'حركة السعر — يدرس أنماط الشموع ومستويات الدعم والمقاومة', en:'Price Action — Studies candlestick patterns and support/resistance levels'},
+    ema: {ar:'المتوسطات المتحركة + RSI — يجمع تقاطعات EMA مع مستويات RSI', en:'EMA + RSI — Combines EMA crossovers with RSI overbought/oversold levels'},
+    trend: {ar:'استراتيجية الاتجاه — يتبع الاتجاهات الرئيسية عبر جلسات التداول', en:'Trend Strategy — Follows major trends across trading sessions'},
+    brk: {ar:'اختراق المستويات — يرصد اختراقات النطاقات والمستويات الرئيسية', en:'Breakout Strategy — Detects range and key level breakouts'}
+  };
+  const allSigs = SCHOOLS.map(sc=>{
+    const sigs = allSignals.filter(s=>s.school===sc);
+    const cls = closedTrades.filter(t=>t.school===sc);
+    const wins = cls.filter(t=>t.result==='win').length;
+    const wr = cls.length>0?(wins/cls.length*100).toFixed(1):0;
+    return {school:sc, sigs:sigs.length, active:activeTrades.filter(t=>t.school===sc).length, closed:cls.length, wr};
+  });
+  cards.innerHTML = allSigs.map(d=>`
+    <div class="card" style="border-top:3px solid ${SCHOOL_COLORS[d.school]}">
+      <div style="font-size:1rem;font-weight:800;color:${SCHOOL_COLORS[d.school]};margin-bottom:6px">${SCHOOL_NAMES[d.school]}</div>
+      <div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px">${schoolDescs[d.school][currentLang]}</div>
+      ${[
+        [currentLang==='ar'?'الإشارات':'Signals', d.sigs],
+        [currentLang==='ar'?'نشطة':'Active', d.active],
+        [currentLang==='ar'?'مغلقة':'Closed', d.closed],
+        [currentLang==='ar'?'معدل الربح':'Win Rate', d.wr+'%']
+      ].map(([l,v])=>`<div class="stat-row"><span class="stat-row-label">${l}</span><span class="stat-row-val">${v}</span></div>`).join('')}
+    </div>`).join('');
+
+  const pm = document.getElementById('school-perf-matrix');
+  if(!pm) return;
+  pm.innerHTML = `<div style="overflow-x:auto">
+  <table>
+    <thead><tr>
+      <th>${currentLang==='ar'?'المدرسة':'School'}</th>
+      ${SYMBOLS.map(s=>`<th>${s}</th>`).join('')}
+    </tr></thead>
+    <tbody>
+      ${SCHOOLS.map(sc=>`<tr>
+        <td style="color:${SCHOOL_COLORS[sc]};font-weight:700">${SCHOOL_NAMES[sc]}</td>
+        ${SYMBOLS.map(sym=>{
+          const cls = closedTrades.filter(t=>t.school===sc&&t.sym===sym);
+          const wins = cls.filter(t=>t.result==='win').length;
+          const wr = cls.length>0?(wins/cls.length*100).toFixed(0):null;
+          const col = wr===null?'var(--text3)':wr>=55?'var(--green)':wr>=45?'var(--gold)':'var(--red)';
+          return `<td style="color:${col};font-family:var(--font-mono)">${wr!==null?wr+'%':'—'}</td>`;
+        }).join('')}
+      </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+// ============================================================
+//  RENDER — TIMEFRAMES
+// ============================================================
+function renderTimeframes(){
+  const el = document.getElementById('timeframes-wrap');
+  if(!el) return;
+  const sym = document.getElementById('tf-symbol')?.value||'XAUUSD';
+  el.innerHTML = `<div class="grid g3">
+    ${TIMEFRAMES.map(tf=>{
+      const atr = getATR(sym,tf).toFixed(3);
+      const sl = (getATR(sym,tf)*ATR_MULT[tf]).toFixed(2);
+      const tp1 = sl;
+      const tp2 = (getATR(sym,tf)*ATR_MULT[tf]*TP2_MULT[tf]).toFixed(2);
+      const recent = allSignals.filter(s=>s.sym===sym&&s.tf===tf).slice(0,5);
+      const buys = recent.filter(s=>s.dir==='buy').length;
+      const sells = recent.filter(s=>s.dir==='sell').length;
+      const bias = buys>sells?'buy':sells>buys?'sell':'neutral';
+      const biasCol = bias==='buy'?'var(--green)':bias==='sell'?'var(--red)':'var(--gold)';
+      const biasLbl = bias==='buy'?(currentLang==='ar'?'صاعد':'Bullish'):bias==='sell'?(currentLang==='ar'?'هابط':'Bearish'):(currentLang==='ar'?'محايد':'Neutral');
+      const cls = closedTrades.filter(t=>t.sym===sym&&t.tf===tf);
+      const wins = cls.filter(t=>t.result==='win').length;
+      const wr = cls.length>0?(wins/cls.length*100).toFixed(0):null;
+      return `<div class="card" style="border-top:3px solid var(--blue)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:1.2rem;font-weight:800;font-family:var(--font-mono);color:var(--blue)">${tf}</div>
+          <span style="color:${biasCol};font-size:0.8rem;font-weight:700">${biasLbl}</span>
+        </div>
+        ${[
+          ['ATR',atr,'var(--text)'],
+          [currentLang==='ar'?'حجم SL':'SL Size',sl,'var(--red)'],
+          ['TP1',tp1,'var(--green)'],
+          ['TP2',tp2,'#34D399'],
+          [currentLang==='ar'?'معامل ATR':'ATR Mult',ATR_MULT[tf]+'×','var(--gold)'],
+          [currentLang==='ar'?'معامل TP2':'TP2 Mult',TP2_MULT[tf]+'×','var(--purple)'],
+          [currentLang==='ar'?'معدل الربح':'Win Rate',wr!==null?wr+'%':'—',wr>=55?'var(--green)':wr>=45?'var(--gold)':'var(--text3)'],
+        ].map(([l,v,c])=>`<div class="stat-row">
+          <span class="stat-row-label">${l}</span>
+          <span class="stat-row-val td-mono" style="color:${c}">${v}</span>
+        </div>`).join('')}
+        <div style="margin-top:10px">
+          <div style="font-size:0.65rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase">${currentLang==='ar'?'إشارات حديثة':'Recent Signals'}</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            ${recent.map(s=>`<span class="badge ${s.dir}" style="font-size:0.6rem">${SCHOOL_NAMES[s.school]}</span>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// ============================================================
+//  RENDER — SETTINGS
+// ============================================================
+function renderSettings(){
+  const el = document.getElementById('settings-wrap');
+  if(el) el.innerHTML = `
+    ${[
+      [currentLang==='ar'?'اللغة':'Language', 'Arabic / English'],
+      [currentLang==='ar'?'الرموز المدعومة':'Supported Symbols', 'XAUUSD, XAUEUR, BTCUSD, BRENT'],
+      [currentLang==='ar'?'الأطر الزمنية':'Timeframes', 'M5, M15, M30, H1, H4, D1'],
+      [currentLang==='ar'?'المدارس التحليلية':'Analysis Schools', '5 Schools'],
+      [currentLang==='ar'?'مصدر البيانات':'Data Source', currentLang==='ar'?'بيانات محاكاة (MT5 قريباً)':'Mock Data (MT5 coming soon)'],
+      [currentLang==='ar'?'تكرار التحديث':'Update Frequency', '3s prices / 8s signals'],
+      ['API', 'Claude AI (Anthropic)'],
+      [currentLang==='ar'?'الحد الأقصى للسجل':'Backlist Limit', '200 per school/symbol/TF'],
+    ].map(([l,v])=>`<div class="stat-row"><span class="stat-row-label">${l}</span><span class="stat-row-val" style="color:var(--text2)">${v}</span></div>`).join('')}`;
+
+  const atr = document.getElementById('atr-settings');
+  if(atr) atr.innerHTML = `
+    ${TIMEFRAMES.map(tf=>`
+    <div class="stat-row">
+      <span class="stat-row-label td-mono">${tf}</span>
+      <span class="stat-row-val">
+        <span style="color:var(--red);font-family:var(--font-mono)">SL ×${ATR_MULT[tf]}</span>
+        <span style="color:var(--text3);margin:0 6px">/</span>
+        <span style="color:var(--green);font-family:var(--font-mono)">TP2 ×${TP2_MULT[tf]}</span>
+      </span>
+    </div>`).join('')}`;
+}
+
+// ============================================================
+//  AI ASSISTANT
+// ============================================================
+let aiConversation = [];
+let aiLoading = false;
+
+function initAI(){
+  const msgsEl = document.getElementById('ai-messages');
+  if(!msgsEl) return;
+  aiConversation = [];
+  const welcome = t('aiWelcome');
+  const disclaimer = t('aiDisclaimer');
+  msgsEl.innerHTML = `
+    <div class="ai-msg">
+      <div class="ai-avatar bot">🤖</div>
+      <div class="ai-bubble bot">${welcome}<br><br><span style="font-size:0.72rem;color:var(--text3)">${disclaimer}</span></div>
+    </div>`;
+  renderAISuggestions();
+}
+
+function renderAISuggestions(){
+  const el = document.getElementById('ai-suggestions');
+  if(!el) return;
+  const suggs = [t('sugg1'),t('sugg2'),t('sugg3'),t('sugg4'),t('sugg5')];
+  el.innerHTML = suggs.map(s=>`<button class="ai-sugg" onclick="quickAsk('${s}')">${s}</button>`).join('');
+}
+
+function quickAsk(q){
+  document.getElementById('ai-input').value = q;
+  sendAI();
+}
+
+async function sendAI(){
+  if(aiLoading) return;
+  const input = document.getElementById('ai-input');
+  const q = input.value.trim();
+  if(!q) return;
+  input.value = '';
+
+  const msgsEl = document.getElementById('ai-messages');
+  // Add user message
+  msgsEl.innerHTML += `<div class="ai-msg user">
+    <div class="ai-avatar user">👤</div>
+    <div class="ai-bubble user">${q}</div>
+  </div>`;
+
+  // Loading indicator
+  const loadId = 'ai-load-'+Date.now();
+  msgsEl.innerHTML += `<div class="ai-msg" id="${loadId}">
+    <div class="ai-avatar bot">🤖</div>
+    <div class="ai-bubble bot"><div class="spinner"></div></div>
+  </div>`;
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+
+  aiLoading = true;
+  document.getElementById('ai-send-btn').disabled = true;
+
+  try {
+    // Build platform context
+    const sym = document.getElementById('ai-symbol-sel')?.value||'XAUUSD';
+    const activeCount = activeTrades.length;
+    const closedCount = closedTrades.length;
+    const recentSignals = allSignals.slice(0,10);
+    const wins = closedTrades.filter(t=>t.result==='win').length;
+    const wr = closedCount>0?(wins/closedCount*100).toFixed(1):0;
+
+    // School performance summary
+    const schoolPerf = SCHOOLS.map(sc=>{
+      const cls = closedTrades.filter(t=>t.school===sc);
+      const w = cls.filter(t=>t.result==='win').length;
+      const r = cls.length>0?(w/cls.length*100).toFixed(0):null;
+      return `${SCHOOL_NAMES[sc]}: ${r?r+'% win rate':'no data'} (${cls.length} trades)`;
+    }).join(', ');
+
+    // Recent signals summary
+    const sigSummary = recentSignals.map(s=>
+      `${SCHOOL_NAMES[s.school]} ${s.dir.toUpperCase()} on ${s.sym} ${s.tf} @ ${fmtPrice(s.sym,s.entry)} (SL:${fmtPrice(s.sym,s.sl)}, TP1:${fmtPrice(s.sym,s.tp1)}, TP2:${fmtPrice(s.sym,s.tp2)}) — ${s.reason}`
+    ).join('\n');
+
+    // Current prices
+    const pricesSummary = SYMBOLS.map(s=>`${s}: ${fmtPrice(s,prices[s])} (${priceChanges[s]>=0?'+':''}${priceChanges[s].toFixed(2)}%)`).join(', ');
+
+    // ATR values
+    const atrSummary = TIMEFRAMES.map(tf=>`${tf}: ATR=${getATR(sym,tf).toFixed(2)}, SL×${ATR_MULT[tf]}, TP2×${TP2_MULT[tf]}`).join('; ');
+
+    const systemPrompt = `You are an advanced AI trading analysis assistant embedded in a multi-strategy trading platform. You have access to real-time platform data.
+
+PLATFORM DATA:
+- Current Prices: ${pricesSummary}
+- Active Trades: ${activeCount}
+- Closed Trades: ${closedCount} (Win Rate: ${wr}%)
+- School Performance: ${schoolPerf}
+- ATR Configuration for ${sym}: ${atrSummary}
+
+RECENT SIGNALS (last 10):
+${sigSummary}
+
+RULES:
+1. All analysis is for EDUCATIONAL purposes only — never financial advice
+2. Respond in ${currentLang==='ar'?'Arabic (العربية)':'English'} language
+3. Be specific and reference actual platform data
+4. When suggesting educational trades, always provide: Entry, SL, TP1, TP2, School used, Timeframe, and Confidence level (Strong/Medium/Weak)
+5. Mention which schools and timeframes support your analysis
+6. Always clarify this is educational, not financial advice`;
+
+    aiConversation.push({role:'user', content:q});
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: systemPrompt,
+        messages: aiConversation
+      })
+    });
+
+    const data = await resp.json();
+    const reply = data.content?.[0]?.text || (currentLang==='ar'?'عذراً، حدث خطأ':'Sorry, an error occurred');
+    aiConversation.push({role:'assistant', content:reply});
+
+    // Replace loading with reply
+    document.getElementById(loadId)?.remove();
+    msgsEl.innerHTML += `<div class="ai-msg">
+      <div class="ai-avatar bot">🤖</div>
+      <div class="ai-bubble bot">${reply.replace(/\n/g,'<br>')}</div>
+    </div>`;
+
+  } catch(e){
+    document.getElementById(loadId)?.remove();
+    const errMsg = currentLang==='ar'?'خطأ في الاتصال بـ Claude API. يرجى المحاولة مرة أخرى.':'Error connecting to Claude API. Please try again.';
+    msgsEl.innerHTML += `<div class="ai-msg">
+      <div class="ai-avatar bot">🤖</div>
+      <div class="ai-bubble bot" style="color:var(--red)">${errMsg}</div>
+    </div>`;
+  }
+
+  aiLoading = false;
+  document.getElementById('ai-send-btn').disabled = false;
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+// ============================================================
+//  NOTIFICATIONS
+// ============================================================
+function showNotification(trade){
+  const container = document.getElementById('notif-container');
+  if(!container) return;
+  const schoolColor = SCHOOL_COLORS[trade.school]||'var(--blue)';
+  const dirLbl = currentLang==='ar'?(trade.dir==='buy'?'شراء':'بيع'):(trade.dir==='buy'?'Buy':'Sell');
+  const id = 'notif-'+Date.now();
+  container.innerHTML += `
+    <div class="notif-item" id="${id}">
+      <span style="color:${schoolColor};font-size:1rem">${trade.dir==='buy'?'▲':'▼'}</span>
+      <div>
+        <div style="font-weight:700;font-size:0.78rem">${trade.sym} ${dirLbl} — ${SCHOOL_NAMES[trade.school]}</div>
+        <div style="color:var(--text3);font-size:0.7rem">${trade.tf} @ ${fmtPrice(trade.sym,trade.entry)}</div>
+      </div>
+    </div>`;
+  setTimeout(()=>{ document.getElementById(id)?.remove(); }, 5000);
+}
+
+// ============================================================
+//  BADGES
+// ============================================================
+function updateBadges(){
+  const sb = document.getElementById('signals-badge');
+  const tb = document.getElementById('trades-badge');
+  if(sb) sb.textContent = allSignals.length;
+  if(tb) tb.textContent = activeTrades.length;
+}
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+let currentPage = 'dashboard';
+
+function navigateTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pageEl = document.getElementById('page-'+page);
+  if(pageEl) pageEl.classList.add('active');
+  const navEl = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if(navEl) navEl.classList.add('active');
+  currentPage = page;
+  const titles = {
+    dashboard: {ar:'لوحة القيادة',en:'Dashboard'},
+    markets: {ar:'الأسواق',en:'Markets'},
+    signals: {ar:'الإشارات',en:'Signals'},
+    trades: {ar:'الصفقات النشطة',en:'Active Trades'},
+    backlist: {ar:'قائمة السجل',en:'Trade Backlist'},
+    schools: {ar:'مقارنة المدارس',en:'Schools Comparison'},
+    statistics: {ar:'الإحصائيات',en:'Statistics'},
+    timeframes: {ar:'الأطر الزمنية',en:'Timeframes'},
+    ai: {ar:'المساعد الذكي',en:'AI Assistant'},
+    settings: {ar:'الإعدادات',en:'Settings'}
+  };
+  const hTitle = document.getElementById('page-header-title');
+  if(hTitle) hTitle.textContent = (titles[page]||{})[currentLang]||page;
+  renderCurrentPage();
+}
+
+function renderCurrentPage(){
+  switch(currentPage){
+    case 'dashboard': renderDashboard(); break;
+    case 'markets': renderMarkets(); break;
+    case 'signals': renderSignalsPage(); break;
+    case 'trades': renderTrades(); break;
+    case 'backlist': renderBacklist(); break;
+    case 'schools': renderSchools(); break;
+    case 'statistics': renderStatistics(); break;
+    case 'timeframes': renderTimeframes(); break;
+    case 'settings': renderSettings(); break;
+  }
+}
+
+function refreshDashboard(){ renderDashboard(); }
+
+// ============================================================
+//  LANGUAGE
+// ============================================================
+function setLang(lang){
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang==='ar'?'rtl':'ltr';
+  document.body.classList.toggle('ltr', lang!=='ar');
+  document.getElementById('btn-ar')?.classList.toggle('active',lang==='ar');
+  document.getElementById('btn-en')?.classList.toggle('active',lang==='en');
+  // Update placeholders
+  const inp = document.getElementById('ai-input');
+  if(inp) inp.placeholder = inp.getAttribute(`data-${lang}-placeholder`)||'';
+  // Update static text
+  document.querySelectorAll('[data-ar]').forEach(el=>{
+    const key = el.getAttribute(`data-${lang}`);
+    if(key && el.tagName!=='OPTION' && el.tagName!=='SELECT') el.innerHTML = key;
+  });
+  initAI();
+  renderCurrentPage();
+}
+
+// ============================================================
+//  CLOCK
+// ============================================================
+function updateClock(){
+  const el = document.getElementById('time-display');
+  if(!el) return;
+  el.textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// ============================================================
+//  NAV CLICK HANDLERS
+// ============================================================
+document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
+  el.addEventListener('click',()=>navigateTo(el.getAttribute('data-page')));
+});
+
+// AI input enter key
+document.getElementById('ai-input')?.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendAI(); }
+});
+
+// ============================================================
+//  INIT
+// ============================================================
+function init(){
+  initPrices();
+  updatePrices();
+  generateInitialData();
+  renderTicker();
+  renderCurrentPage();
+  startEngine();
+  setInterval(updateClock, 1000);
+  updateClock();
+  // Set Arabic placeholder
+  const inp = document.getElementById('ai-input');
+  if(inp) inp.placeholder = inp.getAttribute('data-ar-placeholder')||'';
+  initAI();
+}
+
+window.addEventListener('load', init);
+</script>
+
+</body>
+</html>
